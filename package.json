@@ -1,5 +1,6 @@
 {
-  "name": "kabography--template",
+  "name": "kabography",
+   "homepage": "https://kamohelomokhethi137.github.io/kabography",
   "private": true,
   "version": "0.0.0",
   "type": "module",
