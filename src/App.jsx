@@ -111,7 +111,7 @@ function App() {
 
           {/* Tagline */}
           <motion.p 
-            className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-light tracking-wider font-bold"
+            className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-bold tracking-wider"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
