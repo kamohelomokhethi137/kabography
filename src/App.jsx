@@ -3,8 +3,6 @@ import { motion, useTransform, useScroll, AnimatePresence } from 'framer-motion'
 import { FaArrowRight, FaImages } from 'react-icons/fa';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-
-
 import AboutMe from './pages/AboutMe';
 import PinterestGrid from './pages/ArtisticGallery';
 
@@ -12,7 +10,6 @@ import PinterestGrid from './pages/ArtisticGallery';
 import image1 from './assets/intro/1.jpg';
 import image2 from './assets/intro/2.jpg';
 import image3 from './assets/intro/3.jpg';
-
 
 const heroImages = [image1, image2, image3];
 
@@ -53,9 +50,9 @@ function App() {
 
   return (
     <div className="relative min-h-screen overflow-hidden" ref={containerRef}>
-      {/* Background Carousel - Fixed positioning */}
+      {/* Background Carousel - Fixed positioning with responsive height */}
       <motion.div 
-        className="fixed inset-0 -z-10"
+        className="fixed inset-0 -z-10 h-[70vh] sm:h-full"
         style={{ y }}
       >
         <AnimatePresence initial={false}>
@@ -84,8 +81,8 @@ function App() {
 
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-4 pt-28 sm:pt-36">
+      {/* Hero Section with responsive height */}
+      <section className="relative z-10 flex flex-col items-center justify-center h-[70vh] sm:min-h-screen text-center px-4 pt-20 sm:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -93,9 +90,9 @@ function App() {
           className="max-w-4xl mx-auto"
         >
           {/* Logo/Title */}
-          <div className="relative mb-6 sm:mb-10">
+          <div className="relative mb-4 sm:mb-10">
             <motion.h1 
-              className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter"
               style={{ 
                 fontFamily: "'The Seasons', sans-serif", 
                 textShadow: '0 0 10px rgba(255,255,255,0.3)',
@@ -114,7 +111,7 @@ function App() {
 
           {/* Tagline */}
           <motion.p 
-            className="text-sm sm:text-lg md:text-2xl lg:text-3xl text-gray-300 mb-8 sm:mb-12 max-w-2xl mx-auto font-light tracking-wider"
+            className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-light tracking-wider font-bold"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -132,7 +129,7 @@ function App() {
           </motion.p>
 
           {/* Call to Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
             <HolographicButton href="#book" icon={<FaArrowRight />} className="bg-white/10">
               BOOK A SESSION
             </HolographicButton>
@@ -144,7 +141,7 @@ function App() {
 
         {/* Carousel Indicators */}
         <motion.div 
-          className="absolute bottom-6 sm:bottom-10 left-0 right-0 flex justify-center gap-2 sm:gap-3"
+          className="absolute bottom-4 sm:bottom-10 left-0 right-0 flex justify-center gap-2 sm:gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
