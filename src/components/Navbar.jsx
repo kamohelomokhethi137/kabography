@@ -48,9 +48,9 @@ const Navbar = () => {
   // Added `path` for exact href values
   const navItems = [
     { name: "Home", icon: <FiHome />, path: "/home" },
-    { name: "Gallery", icon: <FiImage />, path: "#gallery" },
-    { name: "Services", icon: <FiCamera />, path: "#services" },
-    { name: "Book", icon: <FiCalendar />, path: "#book" },
+    { name: "Gallery", icon: <FiImage />, path: "/gallery" },
+    { name: "Services", icon: <FiCamera />, path: "/services" },
+    { name: "Book", icon: <FiCalendar />, path: "/book" },
     { name: "About", icon: <FiUser />, path: "#about" },
     { name: "Contact", icon: <FiMail />, path: "/contact" },
   ];

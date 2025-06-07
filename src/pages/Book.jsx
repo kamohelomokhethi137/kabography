@@ -1,7 +1,7 @@
 import React from 'react'
 import Typewriter from '../components/Typewriter'
 
-function Contact() {
+function Book() {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
       <h1 className="text-4xl font-bold mb-8">Contact Us</h1>
@@ -11,4 +11,4 @@ function Contact() {
   )
 }
 
-export default Contact
+export default Book
