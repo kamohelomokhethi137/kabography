@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, useTransform, useScroll, AnimatePresence } from 'framer-motion';
-import { FaArrowRight, FaImages } from 'react-icons/fa';
+import { FaArrowRight, FaImages, FaArrowUp } from 'react-icons/fa';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import AboutMe from './pages/AboutMe';
-import PinterestGrid from './pages/ArtisticGallery';
+import PinterestGrid from './components/ArtisticGallery';
 
-// Directly import all 6 images
+// Hero images
 import image1 from './assets/intro/1.jpg';
 import image2 from './assets/intro/2.jpg';
 import image3 from './assets/intro/3.jpg';
@@ -37,6 +37,7 @@ const HolographicButton = ({ children, icon, ...props }) => (
 
 function App() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({ target: containerRef });
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
@@ -48,9 +49,21 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollToTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden" ref={containerRef}>
-      {/* Background Carousel - Fixed positioning with responsive height */}
+      {/* Background Carousel */}
       <motion.div 
         className="fixed inset-0 -z-10 h-[70vh] sm:h-full"
         style={{ y }}
@@ -76,12 +89,12 @@ function App() {
 
       {/* Grid Overlay */}
       <div className="fixed inset-0 z-0 opacity-20 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjJnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')]" />
       </div>
 
       <Navbar />
 
-      {/* Hero Section with responsive height */}
+      {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-center justify-center h-[70vh] sm:min-h-screen text-center px-4 pt-20 sm:pt-36">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -89,7 +102,6 @@ function App() {
           transition={{ delay: 0.3 }}
           className="max-w-4xl mx-auto"
         >
-          {/* Logo/Title */}
           <div className="relative mb-4 sm:mb-10">
             <motion.h1 
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter"
@@ -109,7 +121,6 @@ function App() {
             />
           </div>
 
-          {/* Tagline */}
           <motion.p 
             className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-bold tracking-wider"
             initial={{ opacity: 0 }}
@@ -128,7 +139,6 @@ function App() {
             ))}
           </motion.p>
 
-          {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
             <HolographicButton href="#book" icon={<FaArrowRight />} className="bg-white/10">
               BOOK A SESSION
@@ -171,7 +181,7 @@ function App() {
           ))}
         </motion.div>
 
-        {/* Scroll Down Prompt */}
+        {/* Scroll Prompt */}
         <motion.div
           className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2"
           initial={{ opacity: 0, y: 20 }}
@@ -186,10 +196,26 @@ function App() {
       </section>
 
       <AboutMe />
-      
       <PinterestGrid />
-
       <Footer />
+
+      {/* Scroll to Top Button */}
+      <AnimatePresence>
+        {showScrollToTop && (
+          <motion.button
+            key="scrollToTop"
+            onClick={scrollToTop}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.4 }}
+            className="fixed bottom-5 right-5 z-50 bg-white text-black p-3 rounded-full shadow-lg hover:scale-110 transition-transform"
+            aria-label="Scroll to top"
+          >
+            <FaArrowUp />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
