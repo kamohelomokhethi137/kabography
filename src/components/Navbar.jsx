@@ -45,28 +45,26 @@ const Navbar = () => {
     },
   };
 
+  // Added `path` for exact href values
   const navItems = [
-    { name: "Home", icon: <FiHome /> },
-    { name: "Gallery", icon: <FiImage /> },
-    { name: "Services", icon: <FiCamera /> },
-    { name: "Book", icon: <FiCalendar /> },
-    { name: "About", icon: <FiUser /> },
-    { name: "Contact", icon: <FiMail /> },
+    { name: "Home", icon: <FiHome />, path: "/home" },
+    { name: "Gallery", icon: <FiImage />, path: "#gallery" },
+    { name: "Services", icon: <FiCamera />, path: "#services" },
+    { name: "Book", icon: <FiCalendar />, path: "#book" },
+    { name: "About", icon: <FiUser />, path: "#about" },
+    { name: "Contact", icon: <FiMail />, path: "/contact" },
   ];
 
   return (
     <nav className="fixed w-full z-50 text-white">
-     
       {/* Glass Dark Background */}
-      
       <div className="absolute inset-0 backdrop-blur-md bg-black/70 border-b border-white/10" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-4 flex items-center justify-between md:justify-center">
-       
         {/* Mobile Logo */}
-
-        <div className="block md:hidden text-2xl"
-         style={{ fontFamily: "'Great Vibes', cursive" }}
+        <div
+          className="block md:hidden text-2xl"
+          style={{ fontFamily: "'Great Vibes', cursive" }}
         >
           Kabography
         </div>
@@ -77,7 +75,7 @@ const Navbar = () => {
             {navItems.slice(0, 3).map((item) => (
               <a
                 key={item.name}
-                href={`#${item.name.toLowerCase()}`}
+                href={item.path}
                 className="flex items-center gap-2 hover:text-gray-300 transition"
               >
                 {item.icon}
@@ -86,7 +84,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,7 +97,7 @@ const Navbar = () => {
             {navItems.slice(3).map((item) => (
               <a
                 key={item.name}
-                href={`#${item.name.toLowerCase()}`}
+                href={item.path}
                 className="flex items-center gap-2 hover:text-gray-300 transition"
               >
                 {item.icon}
@@ -130,9 +127,10 @@ const Navbar = () => {
               {navItems.map((item) => (
                 <motion.a
                   key={item.name}
-                  href={`#${item.name.toLowerCase()}`}
+                  href={item.path}
                   className="flex items-center gap-2 text-white hover:text-gray-300 transition"
                   variants={linkVariants}
+                  onClick={() => setIsMenuOpen(false)} // close menu on click
                 >
                   {item.icon}
                   <span>{item.name}</span>
