@@ -1,8 +1,13 @@
-import Home from './pages/Home';
-import Contact from './pages/Contact';
+import { Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar"; // or correct path
 
 function App() {
-  return <Home />;
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
 }
 
 export default App;
