@@ -107,7 +107,7 @@ const PinterestGrid = () => {
               {/* View Gallery button on every image */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <a
-                  href="#gallery"
+                  href="/gallery"
                   className="view-gallery-btn bg-black text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2 hover:opacity-100 transition-opacity pointer-events-auto"
                   style={{ opacity: 0.7 }}
                 >
