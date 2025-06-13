@@ -28,15 +28,15 @@ const AboutMe = () => {
       className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden"
     >
       {/* DotGrid background */}
-      <div className="absolute inset-0 z-0 opacity-35">
+     <div className="absolute inset-0 z-0 opacity-20">
   <DotGrid
     dotSize={3}
     gap={15}
     baseColor="#5227FF"
     activeColor="#5227FF"
-    proximity={150}
-    shockRadius={300}
-    shockStrength={90}
+    proximity={120}
+    shockRadius={250}
+    shockStrength={5}
     resistance={750}
     returnDuration={1.5}
   />
