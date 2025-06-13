@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import AboutImage from '../assets/about/about.jpg';
+import DotGrid from '../animation/DotGrid';
 
 const AboutMe = () => {
   const ref = useRef(null);
@@ -9,12 +10,10 @@ const AboutMe = () => {
     offset: ["start end", "end start"]
   });
 
-  // Animation values
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 1]);
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
   const underlineScale = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
 
-  // Text content
   const paragraphs = [
     "Kabography was founded by Kabelo Ramatseliso, whose passion for storytelling through photography sparked the creation of a brand focused on capturing life's special moments with creativity and care.",
     "Later, Mabontle Ramatseliso joined as a supportive partner, adding strength and shared vision to the business. Together, they form a dedicated team committed to quality and customer satisfaction.",
@@ -23,28 +22,41 @@ const AboutMe = () => {
   ];
 
   return (
-    <section 
+    <section
       ref={ref}
-      className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden"
       id="about"
+      className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        {/* Text Content */}
+      {/* DotGrid background */}
+      <div className="absolute inset-0 z-0 opacity-35">
+  <DotGrid
+    dotSize={3}
+    gap={15}
+    baseColor="#5227FF"
+    activeColor="#5227FF"
+    proximity={150}
+    shockRadius={300}
+    shockStrength={90}
+    resistance={750}
+    returnDuration={1.5}
+  />
+</div>
+
+      {/* Foreground content */}
+      <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
           <div className="relative inline-block">
-            <motion.h2 
-              className="text-4xl sm:text-5xl md:text-6xl font-bold relative inline-block"
+            <motion.h2
+              className="text-4xl sm:text-5xl md:text-6xl font-bold"
               style={{ opacity }}
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
                 About Us
               </span>
             </motion.h2>
-            
-            {/* Animated Underline - Confined to text width */}
-            <motion.div 
+            <motion.div
               className="absolute bottom-0 left-0 h-1 bg-white origin-left"
-              style={{ 
+              style={{
                 width: '100%',
                 scaleX: underlineScale,
               }}
@@ -58,18 +70,14 @@ const AboutMe = () => {
                 [0.1 + index * 0.15, 0.3 + index * 0.15],
                 [0, 1]
               );
-              
+
               return (
-                <motion.p 
+                <motion.p
                   key={index}
                   className="text-lg sm:text-xl text-gray-400 leading-relaxed"
                   style={{
                     opacity: lineProgress,
-                    color: useTransform(
-                      lineProgress,
-                      [0, 1],
-                      ["#9ca3af", "#ffffff"]
-                    )
+                    color: useTransform(lineProgress, [0, 1], ["#9ca3af", "#ffffff"])
                   }}
                 >
                   {text}
@@ -79,24 +87,24 @@ const AboutMe = () => {
           </div>
         </div>
 
-        <motion.div 
+        <motion.div
           className="relative aspect-square w-full h-auto rounded-2xl overflow-hidden border-2 border-white/10"
           style={{ y }}
         >
-          <img 
-            src={AboutImage}  
-            alt="kabography" 
+          <img
+            src={AboutImage}
+            alt="kabography"
             className="w-full h-full object-cover"
           />
-          <motion.div 
+          <motion.div
             className="absolute inset-0 bg-white/10 backdrop-blur-sm"
             style={{ opacity: useTransform(scrollYProgress, [0, 0.5], [0.5, 0]) }}
           />
         </motion.div>
       </div>
 
-      {/* Decorative elements */}
-      <motion.div 
+      {/* Optional top bar decoration */}
+      <motion.div
         className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white to-transparent"
         style={{
           opacity: useTransform(scrollYProgress, [0, 0.5], [0, 0.2]),
