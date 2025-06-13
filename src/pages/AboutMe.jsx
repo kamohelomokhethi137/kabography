@@ -27,66 +27,71 @@ const AboutMe = () => {
       id="about"
       className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden"
     >
-      {/* DotGrid background */}
-     <div className="absolute inset-0 z-0 opacity-20">
-  <DotGrid
-    dotSize={3}
-    gap={15}
-    baseColor="#5227FF"
-    activeColor="#5227FF"
-    proximity={120}
-    shockRadius={250}
-    shockStrength={5}
-    resistance={750}
-    returnDuration={1.5}
-  />
-</div>
-
-      {/* Foreground content */}
-      <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8">
-          <div className="relative inline-block">
-            <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl font-bold"
-              style={{ opacity }}
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
-                About Us
-              </span>
-            </motion.h2>
-            <motion.div
-              className="absolute bottom-0 left-0 h-1 bg-white origin-left"
-              style={{
-                width: '100%',
-                scaleX: underlineScale,
-              }}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        
+        {/* TEXT COLUMN */}
+        <div className="relative z-10">
+          {/* DotGrid behind text only */}
+          <div className="absolute inset-0 opacity-20 z-0 pointer-events-none">
+            <DotGrid
+              dotSize={3}
+              gap={15}
+              baseColor="#5227FF"
+              activeColor="#5227FF"
+              proximity={120}
+              shockRadius={250}
+              shockStrength={5}
+              resistance={750}
+              returnDuration={1.5}
             />
           </div>
 
-          <div className="space-y-6">
-            {paragraphs.map((text, index) => {
-              const lineProgress = useTransform(
-                scrollYProgress,
-                [0.1 + index * 0.15, 0.3 + index * 0.15],
-                [0, 1]
-              );
+          {/* Foreground text content */}
+          <div className="relative z-10 space-y-8">
+            <div className="relative inline-block">
+              <motion.h2
+                className="text-4xl sm:text-5xl md:text-6xl font-bold"
+                style={{ opacity }}
+              >
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
+                  About Us
+                </span>
+              </motion.h2>
+              <motion.div
+                className="absolute bottom-0 left-0 h-1 bg-white origin-left"
+                style={{
+                  width: '100%',
+                  scaleX: underlineScale,
+                }}
+              />
+            </div>
 
-              return (
-                <motion.p
-                  key={index}
-                  className="text-lg sm:text-xl text-gray-400 leading-relaxed"
-                  style={{
-                    opacity: lineProgress,
-                    color: useTransform(lineProgress, [0, 1], ["#9ca3af", "#ffffff"])
-                  }}
-                >
-                  {text}
-                </motion.p>
-              );
-            })}
+            <div className="space-y-6">
+              {paragraphs.map((text, index) => {
+                const lineProgress = useTransform(
+                  scrollYProgress,
+                  [0.1 + index * 0.15, 0.3 + index * 0.15],
+                  [0, 1]
+                );
+
+                return (
+                  <motion.p
+                    key={index}
+                    className="text-lg sm:text-xl text-gray-400 leading-relaxed"
+                    style={{
+                      opacity: lineProgress,
+                      color: useTransform(lineProgress, [0, 1], ["#9ca3af", "#ffffff"])
+                    }}
+                  >
+                    {text}
+                  </motion.p>
+                );
+              })}
+            </div>
           </div>
         </div>
 
+        {/* IMAGE COLUMN */}
         <motion.div
           className="relative aspect-square w-full h-auto rounded-2xl overflow-hidden border-2 border-white/10"
           style={{ y }}
@@ -103,7 +108,7 @@ const AboutMe = () => {
         </motion.div>
       </div>
 
-      {/* Optional top bar decoration */}
+      {/* Optional Decorative Top Border */}
       <motion.div
         className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white to-transparent"
         style={{
