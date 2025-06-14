@@ -3,6 +3,9 @@
   import { FaArrowRight, FaImages, FaArrowUp } from 'react-icons/fa';
   import Navbar from '../components/Navbar';
   import Footer from '../components/Footer'
+  import AboutMeWrapper from '../animation/AboutMeWrapper';
+  import Galleryanimation from '../animation/Galleryanimation';
+
   import AboutMe from './AboutMe'
   import BlurText from '../animation/BlurText';
   import PinterestGrid from '../components/ArtisticGallery';
@@ -195,8 +198,8 @@
           </motion.div>
         </section>
 
-        <AboutMe />
-        <PinterestGrid />
+        <AboutMeWrapper />
+        <Galleryanimation />
         <Footer />
 
         {/* Scroll to Top Button */}
