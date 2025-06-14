@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FiMenu,
@@ -13,13 +13,33 @@ import {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Scroll direction detection
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowNavbar(false); // Scroll down = hide
+      } else {
+        setShowNavbar(true); // Scroll up = show
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const menuVariants = {
     open: {
       opacity: 1,
       y: 0,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
         when: "beforeChildren",
       },
     },
@@ -36,15 +56,14 @@ const Navbar = () => {
     open: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring", stiffness: 300 },
+      transition: { type: "tween", duration: 0.2 },
     },
     closed: {
       opacity: 0,
-      y: -20,
-      transition: { duration: 0.2 },
+      y: -10,
+      transition: { duration: 0.15 },
     },
   };
-
 
   const navItems = [
     { name: "Home", icon: <FiHome />, path: "/home" },
@@ -56,7 +75,12 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed w-full z-50 text-white">
+    <motion.nav
+      initial={{ y: 0 }}
+      animate={{ y: showNavbar ? 0 : "-100%" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="fixed w-full z-50 text-white"
+    >
       {/* Glass Dark Background */}
       <div className="absolute inset-0 backdrop-blur-md bg-black/70 border-b border-white/10" />
 
@@ -87,7 +111,7 @@ const Navbar = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-2xl font-bold "
+            className="text-2xl font-bold"
             style={{ fontFamily: "'Great Vibes', cursive" }}
           >
             Kabography
@@ -140,7 +164,7 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 
