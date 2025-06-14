@@ -1,6 +1,18 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState, useMemo } from 'react';
 
+
+/*
+link: reactbits.com/blur-text
+
+CREDITS: This code is inspired by the work of various developers in the Framer
+ Motion community, particularly for creating animated text effects.
+
+This component creates a text animation that blurs and fades in words or characters as 
+they come into view, with customizable animation properties.
+
+*/
+
 const buildKeyframes = (from, steps) => {
   const keys = new Set([
     ...Object.keys(from),

@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import AboutImage from '../assets/about/about.jpg';
-import DotGrid from '../animation/DotGrid';
 
 const AboutMe = () => {
   const ref = useRef(null);
@@ -30,64 +29,46 @@ const AboutMe = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
         {/* TEXT COLUMN */}
-        <div className="relative z-10">
-          {/* DotGrid behind text only */}
-          <div className="absolute inset-0 opacity-20 z-0 pointer-events-none">
-            <DotGrid
-              dotSize={3}
-              gap={15}
-              baseColor="#5227FF"
-              activeColor="#5227FF"
-              proximity={120}
-              shockRadius={250}
-              shockStrength={5}
-              resistance={750}
-              returnDuration={1.5}
+        <div className="relative z-10 space-y-8">
+          <div className="relative inline-block">
+            <motion.h2
+              className="text-4xl sm:text-5xl md:text-6xl font-bold"
+              style={{ opacity }}
+            >
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
+                About Us
+              </span>
+            </motion.h2>
+            <motion.div
+              className="absolute bottom-0 left-0 h-1 bg-white origin-left"
+              style={{
+                width: '100%',
+                scaleX: underlineScale,
+              }}
             />
           </div>
 
-          {/* Foreground text content */}
-          <div className="relative z-10 space-y-8">
-            <div className="relative inline-block">
-              <motion.h2
-                className="text-4xl sm:text-5xl md:text-6xl font-bold"
-                style={{ opacity }}
-              >
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
-                  About Us
-                </span>
-              </motion.h2>
-              <motion.div
-                className="absolute bottom-0 left-0 h-1 bg-white origin-left"
-                style={{
-                  width: '100%',
-                  scaleX: underlineScale,
-                }}
-              />
-            </div>
+          <div className="space-y-6">
+            {paragraphs.map((text, index) => {
+              const lineProgress = useTransform(
+                scrollYProgress,
+                [0.1 + index * 0.15, 0.3 + index * 0.15],
+                [0, 1]
+              );
 
-            <div className="space-y-6">
-              {paragraphs.map((text, index) => {
-                const lineProgress = useTransform(
-                  scrollYProgress,
-                  [0.1 + index * 0.15, 0.3 + index * 0.15],
-                  [0, 1]
-                );
-
-                return (
-                  <motion.p
-                    key={index}
-                    className="text-lg sm:text-xl text-gray-400 leading-relaxed"
-                    style={{
-                      opacity: lineProgress,
-                      color: useTransform(lineProgress, [0, 1], ["#9ca3af", "#ffffff"])
-                    }}
-                  >
-                    {text}
-                  </motion.p>
-                );
-              })}
-            </div>
+              return (
+                <motion.p
+                  key={index}
+                  className="text-lg sm:text-xl text-gray-400 leading-relaxed"
+                  style={{
+                    opacity: lineProgress,
+                    color: useTransform(lineProgress, [0, 1], ["#9ca3af", "#ffffff"])
+                  }}
+                >
+                  {text}
+                </motion.p>
+              );
+            })}
           </div>
         </div>
 
