@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
+import { useSwipeable } from "react-swipeable";
+import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
 
 import Image1 from "../assets/gallery/1.webp";
 import Image2 from "../assets/gallery/2.webp";
@@ -10,17 +14,22 @@ import Image5 from "../assets/gallery/5.webp";
 import Image6 from "../assets/gallery/6.webp";
 
 gsap.registerPlugin(ScrollTrigger);
+Modal.setAppElement("#root");
 
 const images = [Image1, Image2, Image3, Image4, Image5, Image6];
+
 
 const PinterestGrid = () => {
   const sectionRef = useRef(null);
   const imgRefs = useRef([]);
   imgRefs.current = [];
 
-  // For mobile horizontal scroll index
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
+  const [autoScroll, setAutoScroll] = useState(true);
+  const navigate = useNavigate();
+  
   const addToRefs = (el) => {
     if (el && !imgRefs.current.includes(el)) {
       imgRefs.current.push(el);
@@ -47,36 +56,48 @@ const PinterestGrid = () => {
           }
         );
       });
-
-      // Animate all view gallery buttons with subtle spring scale animation
-      gsap.utils.toArray(".view-gallery-btn").forEach((btn) => {
-        gsap.to(btn, {
-          scale: 1.1,
-          opacity: 0.7,
-          repeat: -1,
-          yoyo: true,
-          ease: "elastic.out(1, 0.3)",
-          duration: 1.5,
-          paused: false,
-          // Make sure initial scale is 1 and opacity 0.7
-          onStart: () => {
-            btn.style.opacity = "0.7";
-            btn.style.transformOrigin = "center";
-          },
-        });
-      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  // Handle Prev/Next buttons on mobile
+  // Auto-scroll on mobile
+  useEffect(() => {
+    if (!autoScroll) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [autoScroll]);
+
   const handlePrev = () => {
+    setAutoScroll(false);
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
+
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setAutoScroll(false);
+    setCurrentIndex((prev) => (prev + 1) % images.length);
   };
+
+  const openModal = (index) => {
+    setModalImageIndex(index);
+    setModalOpen(true);
+    setAutoScroll(false);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleNext(),
+    onSwipedRight: () => handlePrev(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true,
+  });
 
   return (
     <section
@@ -88,39 +109,28 @@ const PinterestGrid = () => {
           Explore the Essence of Light
         </h2>
 
-        {/* Desktop / Tablet grid */}
+        {/* Desktop Grid */}
         <div className="hidden sm:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {images.map((src, i) => (
             <div
               ref={addToRefs}
               key={i}
-              className="relative rounded-xl overflow-hidden shadow-xl transform-gpu transition duration-700"
+              className="relative rounded-xl overflow-hidden shadow-xl transition duration-700"
               style={{ zIndex: images.length - i }}
+              onClick={() => openModal(i)}
             >
               <img
                 src={src}
                 alt={`Gallery ${i + 1}`}
-                className="w-full h-72 object-cover rounded-xl"
+                className="w-full h-72 object-cover rounded-xl cursor-pointer"
                 loading="lazy"
               />
-
-              {/* View Gallery button on every image */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <a
-                  href="/gallery"
-                  className="view-gallery-btn bg-black text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2 hover:opacity-100 transition-opacity pointer-events-auto"
-                  style={{ opacity: 0.7 }}
-                >
-                  View Gallery
-                  <span className="text-lg">↓</span>
-                </a>
-              </div>
             </div>
           ))}
         </div>
 
-        {/* Mobile horizontal scroll */}
-        <div className="sm:hidden relative">
+        {/* Mobile Swipe Gallery */}
+        <div className="sm:hidden relative" {...swipeHandlers}>
           <div className="overflow-x-hidden">
             <div
               className="flex transition-transform duration-500"
@@ -130,49 +140,93 @@ const PinterestGrid = () => {
                 <div
                   key={i}
                   className="flex-shrink-0 w-full rounded-xl overflow-hidden shadow-xl relative"
-                  style={{ zIndex: images.length - i }}
+                  onClick={() => openModal(i)}
                 >
                   <img
                     src={src}
                     alt={`Gallery ${i + 1}`}
-                    className="w-full h-72 object-cover rounded-xl"
+                    className="w-full h-72 object-cover rounded-xl cursor-pointer"
                     loading="lazy"
                   />
-                  {/* View Gallery button on every image */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <a
-                      href="/gallery"
-                      className="view-gallery-btn bg-black text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg flex items-center gap-2 hover:opacity-100 transition-opacity pointer-events-auto"
-                      style={{ opacity: 0.7 }}
-                    >
-                      View Gallery
-                      <span className="text-lg">↓</span>
-                    </a>
-                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Prev / Next buttons */}
-          <div className="flex justify-between mt-4 px-4">
-            <button
-              onClick={handlePrev}
-              className="bg-black text-white px-5 py-2 rounded-full font-semibold hover:bg-gray-800 transition"
-              aria-label="Previous Image"
+          {/* Arrows */}
+          <button
+            onClick={handlePrev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-10"
+          >
+            <FiChevronLeft size={24} />
+          </button>
+          <button
+            onClick={handleNext}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/70 text-white p-2 rounded-full z-10"
+          >
+            <FiChevronRight size={24} />
+          </button>
+        </div>
+
+        {/* VIEW GALLERY BUTTON */}
+        <div className="flex justify-center mt-12">
+          <button
+            className="group relative flex items-center border-none bg-transparent cursor-pointer uppercase text-sm tracking-[4px] text-black"
+            style={{ padding: 0 }}
+            onClick={() => navigate("/gallery")}
+          >
+            <span
+              className="relative pb-[7px] pr-[15px]"
+              style={{
+                textTransform: "uppercase",
+                fontSize: "14px",
+                letterSpacing: "4px",
+              }}
             >
-              Prev
-            </button>
-            <button
-              onClick={handleNext}
-              className="bg-black text-white px-5 py-2 rounded-full font-semibold hover:bg-gray-800 transition"
-              aria-label="Next Image"
+              <span className="hover-underline-animation relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-black after:scale-x-0 after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">
+                View gallery
+              </span>
+            </span>
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="30"
+              height="10"
+              viewBox="0 0 46 16"
+              className="transition-transform duration-300 transform -translate-x-2 group-hover:translate-x-0 active:scale-90"
             >
-              Next
-            </button>
-          </div>
+              <path
+                d="M8,0,6.545,1.455l5.506,5.506H-30V9.039H12.052L6.545,14.545,8,16l8-8Z"
+                transform="translate(30)"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </button>
         </div>
       </div>
+
+      {/* Modal */}
+      <Modal
+        isOpen={modalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Image Viewer"
+        className="fixed inset-0 flex items-center justify-center bg-black/90 p-4"
+        overlayClassName="fixed inset-0 bg-black/80 z-50"
+      >
+        <div className="relative max-w-3xl w-full">
+          <img
+            src={images[modalImageIndex]}
+            alt={`Full View ${modalImageIndex + 1}`}
+            className="w-full h-auto rounded-xl object-contain"
+          />
+          <button
+            onClick={closeModal}
+            className="absolute top-2 right-2 bg-white text-black p-2 rounded-full z-50"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+      </Modal>
     </section>
   );
 };
