@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import { useSwipeable } from "react-swipeable";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +11,9 @@ import Image4 from "../assets/gallery/4.webp";
 import Image5 from "../assets/gallery/5.webp";
 import Image6 from "../assets/gallery/6.webp";
 
-gsap.registerPlugin(ScrollTrigger);
 Modal.setAppElement("#root");
 
 const images = [Image1, Image2, Image3, Image4, Image5, Image6];
-
 
 const PinterestGrid = () => {
   const sectionRef = useRef(null);
@@ -29,7 +25,7 @@ const PinterestGrid = () => {
   const [modalImageIndex, setModalImageIndex] = useState(0);
   const [autoScroll, setAutoScroll] = useState(true);
   const navigate = useNavigate();
-  
+
   const addToRefs = (el) => {
     if (el && !imgRefs.current.includes(el)) {
       imgRefs.current.push(el);
@@ -37,31 +33,30 @@ const PinterestGrid = () => {
   };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      imgRefs.current.forEach((img, index) => {
-        gsap.fromTo(
-          img,
-          { y: 50, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            ease: "power3.out",
-            duration: 0.5,
-            delay: index * 0.05,
-            scrollTrigger: {
-              trigger: img,
-              start: "top 85%",
-              toggleActions: "play none none reverse",
-            },
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.transition = "transform 0.6s ease-out, opacity 0.6s ease-out";
+            entry.target.style.transform = "translateY(0)";
+            entry.target.style.opacity = "1";
+            observer.unobserve(entry.target);
           }
-        );
-      });
-    }, sectionRef);
+        });
+      },
+      { threshold: 0.1 }
+    );
 
-    return () => ctx.revert();
+    imgRefs.current.forEach((img) => {
+      img.style.willChange = "transform, opacity";
+      img.style.transform = "translateY(20px)";
+      img.style.opacity = "0";
+      observer.observe(img);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
-  // Auto-scroll on mobile
   useEffect(() => {
     if (!autoScroll) return;
 
@@ -93,8 +88,8 @@ const PinterestGrid = () => {
   };
 
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => handleNext(),
-    onSwipedRight: () => handlePrev(),
+    onSwipedLeft: handleNext,
+    onSwipedRight: handlePrev,
     preventDefaultTouchmoveEvent: true,
     trackMouse: true,
   });
@@ -115,14 +110,13 @@ const PinterestGrid = () => {
             <div
               ref={addToRefs}
               key={i}
-              className="relative rounded-xl overflow-hidden shadow-xl transition duration-700"
-              style={{ zIndex: images.length - i }}
+              className="relative rounded-xl overflow-hidden shadow-xl will-change-transform cursor-pointer"
               onClick={() => openModal(i)}
             >
               <img
                 src={src}
                 alt={`Gallery ${i + 1}`}
-                className="w-full h-72 object-cover rounded-xl cursor-pointer"
+                className="w-full h-72 object-cover rounded-xl"
                 loading="lazy"
               />
             </div>
@@ -145,7 +139,7 @@ const PinterestGrid = () => {
                   <img
                     src={src}
                     alt={`Gallery ${i + 1}`}
-                    className="w-full h-72 object-cover rounded-xl cursor-pointer"
+                    className="w-full h-72 object-cover rounded-xl"
                     loading="lazy"
                   />
                 </div>
@@ -175,14 +169,7 @@ const PinterestGrid = () => {
             style={{ padding: 0 }}
             onClick={() => navigate("/gallery")}
           >
-            <span
-              className="relative pb-[7px] pr-[15px]"
-              style={{
-                textTransform: "uppercase",
-                fontSize: "14px",
-                letterSpacing: "4px",
-              }}
-            >
+            <span className="relative pb-[7px] pr-[15px]">
               <span className="hover-underline-animation relative after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-black after:scale-x-0 after:origin-bottom-right after:transition-transform after:duration-300 group-hover:after:scale-x-100 group-hover:after:origin-bottom-left">
                 View gallery
               </span>

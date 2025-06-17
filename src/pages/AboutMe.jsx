@@ -10,8 +10,10 @@ const AboutMe = () => {
   });
 
   const opacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 1]);
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "-20%"]);
   const underlineScale = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
+
+  // Parallax effect: image scrolls slower than text
+  const imageY = useTransform(scrollYProgress, [0, 1], ['0%', '-10%']);
 
   const paragraphs = [
     "Kabography was founded by Kabelo Ramatseliso, whose passion for storytelling through photography sparked the creation of a brand focused on capturing life's special moments with creativity and care.",
@@ -20,14 +22,16 @@ const AboutMe = () => {
     "To complement our services, we also offer high-quality frames and canvas prints, perfect for displaying your memories at home or in the workplace"
   ];
 
+   console.log('ref.current:', ref.current);
   return (
     <section
       ref={ref}
       id="about"
-      className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden"
-    >
+      className="relative py-20 px-4 sm:px-8 md:px-12 lg:px-20 bg-black overflow-hidden">
+
+     
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
+
         {/* TEXT COLUMN */}
         <div className="relative z-10 space-y-8">
           <div className="relative inline-block">
@@ -72,24 +76,44 @@ const AboutMe = () => {
           </div>
         </div>
 
-        {/* IMAGE COLUMN */}
+        {/* IMAGE COLUMN with slower scroll effect */}
         <motion.div
-          className="relative aspect-square w-full h-auto rounded-2xl overflow-hidden border-2 border-white/10"
-          style={{ y }}
+          className="relative aspect-square w-full h-auto rounded-2xl overflow-hidden border border-white/10 shadow-2xl group"
+          initial={{ opacity: 0, scale: 0.95, y: 40 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          viewport={{ once: true, amount: 0.3 }}
+          style={{ y: imageY }}
         >
-          <img
+          {/* Image with hover zoom */}
+          <motion.img
             src={AboutImage}
             alt="kabography"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-105"
+            loading="lazy"
+            style={{ willChange: 'transform, opacity' }}
           />
+
+          {/* Soft overlay that animates on scroll */}
           <motion.div
-            className="absolute inset-0 bg-white/10 backdrop-blur-sm"
-            style={{ opacity: useTransform(scrollYProgress, [0, 0.5], [0.5, 0]) }}
+            className="absolute inset-0 bg-white/10 backdrop-blur-sm pointer-events-none"
+            style={{
+              opacity: useTransform(scrollYProgress, [0, 0.5], [0, 0.2])
+            }}
+          />
+
+          {/* Light border glow animation */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-white/30 transition duration-500 pointer-events-none z-10"
+            style={{
+              boxShadow: '0 0 20px 4px rgba(255,255,255,0.05)',
+              opacity: useTransform(scrollYProgress, [0, 1], [0, 0.3])
+            }}
           />
         </motion.div>
+
       </div>
 
-      {/* Optional Decorative Top Border */}
       <motion.div
         className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white to-transparent"
         style={{
@@ -98,6 +122,7 @@ const AboutMe = () => {
         }}
       />
     </section>
+    
   );
 };
 
