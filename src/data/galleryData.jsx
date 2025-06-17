@@ -25,8 +25,9 @@ import Image25 from '../assets/gallery/25.webp';
 
 const images = [
   { src: Image1, width: 800, height: 1200 },
-  { src: Image2, width: 1200, height: 800 },
-  { src: Image3, width: 800, height: 1200 },
+   { src: Image3, width: 800, height: 1200 },
+  { src: Image25, width: 1200, height: 800 },
+ 
   { src: Image4, width: 1200, height: 800 },
   { src: Image5, width: 800, height: 1200 },
   { src: Image6, width: 1200, height: 800 },
@@ -47,7 +48,8 @@ const images = [
   { src: Image21, width: 800, height: 1200 },
   { src: Image23, width: 1200, height: 800 },
   { src: Image24, width: 800, height: 1200 },
-  { src: Image25, width: 1200, height: 800 },
+    { src: Image2, width: 1200, height: 800 },
+
 ];
 
 export default images;

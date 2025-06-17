@@ -1,40 +1,53 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import images from '../data/galleryData'; 
+import images from '../data/galleryData';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const ArtisticGallery = () => {
   const galleryRef = useRef(null);
-  const [loaded, setLoaded] = useState(Array(images.length).fill(false));
+  const [loaded, setLoaded] = useState(() => Array(images.length).fill(false));
   const [showAllImages, setShowAllImages] = useState(false);
 
-  useEffect(() => {
-    if (loaded.every(Boolean)) {
-      initAnimations();
-    }
-  }, [loaded]);
+  const handleImageLoad = useCallback((index) => {
+    setLoaded((prev) => {
+      if (prev[index]) return prev;
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
+  }, []);
 
-  const initAnimations = () => {
+  useEffect(() => {
+    const visibleCount = showAllImages ? images.length : 5;
+    if (!loaded.slice(0, visibleCount).every(Boolean)) return;
+
     const items = gsap.utils.toArray('.gallery-item');
 
-    gsap.from(items, {
-      y: 80,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out',
-      stagger: 0.05,
-      scrollTrigger: {
-        trigger: galleryRef.current,
-        start: 'top 80%'
-      },
-    });
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
-    items.forEach((item) => {
+    gsap.fromTo(items, 
+      { y: 60, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1,
+        ease: 'power2.out',
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: galleryRef.current,
+          start: 'top 80%',
+        }
+      }
+    );
+
+    items.forEach(item => {
       const img = item.querySelector('img');
+      if (!img) return;
+
       gsap.to(img, {
         yPercent: -10,
         ease: 'none',
@@ -42,24 +55,13 @@ const ArtisticGallery = () => {
           trigger: item,
           start: 'top bottom',
           end: 'bottom top',
-          scrub: true
-        },
+          scrub: true,
+        }
       });
     });
-  };
 
-  const handleImageLoad = (index) => {
-    setLoaded((prev) => {
-      const next = [...prev];
-      next[index] = true;
-      return next;
-    });
-  };
-
-  const getGridClass = (index) => {
-    const patterns = ['', 'md:col-span-2', 'md:row-span-2', 'md:col-span-2 md:row-span-2'];
-    return patterns[index % patterns.length];
-  };
+    return () => ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+  }, [loaded, showAllImages]);
 
   return (
     <section className="relative py-20 px-4 bg-black text-white">
@@ -69,43 +71,36 @@ const ArtisticGallery = () => {
 
       <div
         ref={galleryRef}
-        className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 auto-rows-[minmax(220px,auto)]"
+        className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
       >
-        {images.slice(0, showAllImages ? images.length : 8).map((img, index) => (
+        {(showAllImages ? images : images.slice(0, 6)).map((img, index) => (
           <motion.div
-            key={index}
-            className={`gallery-item relative overflow-hidden rounded-xl ${getGridClass(index)} bg-neutral-900`}
+            key={img.src}
+            className="gallery-item relative aspect-[4/3] bg-neutral-900 overflow-hidden rounded-xl"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-700 ${loaded[index] ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-              <div className="relative w-14 h-14">
-                <div className="absolute inset-0 border-4 border-lime-400 border-t-transparent rounded-full animate-spin"></div>
-                <div className="absolute inset-0 rounded-full bg-lime-400 opacity-10 blur-xl"></div>
+            {!loaded[index] && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10">
+                <div className="w-10 h-10 border-4 border-lime-400 border-t-transparent rounded-full animate-spin" />
               </div>
-            </div>
+            )}
 
             <img
               src={img.src}
-              alt={`Gallery ${index + 1}`}
+              alt={`Photo ${index + 1}`}
+              onLoad={() => handleImageLoad(index)}
+              className={`w-full h-full object-cover transition-opacity duration-700 ease-in ${loaded[index] ? 'opacity-100' : 'opacity-0'}`}
               loading="lazy"
               decoding="async"
-              fetchpriority={index < 8 ? "high" : "low"}
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in ${loaded[index] ? 'opacity-100' : 'opacity-0'}`}
-              onLoad={() => handleImageLoad(index)}
+              fetchPriority={index < 5 ? 'high' : 'low'}
+              draggable={false}
             />
 
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black/70 opacity-0 hover:opacity-100 transition-opacity duration-500 flex items-end p-4">
-              <motion.h3
-                className="text-white text-sm font-semibold"
-                initial={{ y: 20, opacity: 0 }}
-                whileHover={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                PHOTO {index + 1}
-              </motion.h3>
+            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4">
+              <p className="text-sm font-semibold">{index + 1}</p>
             </div>
           </motion.div>
         ))}
@@ -113,21 +108,16 @@ const ArtisticGallery = () => {
 
       {!showAllImages && (
         <motion.div
-          className="text-center mt-16"
+          className="text-center mt-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           <button
             onClick={() => setShowAllImages(true)}
-            className="group relative px-6 py-3 text-lime-400 border-2 border-lime-400 rounded-full overflow-hidden"
+            className="relative inline-flex items-center justify-center px-6 py-3 border border-lime-400 text-lime-400 rounded-full text-sm font-medium group overflow-hidden"
           >
-            <span className="relative z-10 flex items-center gap-1 text-sm font-medium">
-              VIEW ALL
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-4 h-4 group-hover:translate-x-1 transition-transform">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </span>
+            <span className="relative z-10 group-hover:text-black transition-colors">VIEW ALL</span>
             <motion.span
               className="absolute inset-0 bg-lime-400 z-0"
               initial={{ x: '-100%' }}

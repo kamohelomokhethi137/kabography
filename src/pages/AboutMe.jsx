@@ -22,7 +22,7 @@ const AboutMe = () => {
     "To complement our services, we also offer high-quality frames and canvas prints, perfect for displaying your memories at home or in the workplace"
   ];
 
-   console.log('ref.current:', ref.current);
+  //  console.log('ref.current:', ref.current);
   return (
     <section
       ref={ref}
