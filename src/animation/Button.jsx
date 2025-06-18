@@ -9,7 +9,7 @@ const Button = ({ children, href, icon }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       className={`relative inline-flex items-center justify-center 
-        px-4 py-2 text-xs
+        px-8 py-4 text-xs
         sm:px-6 sm:py-3 sm:text-sm
         md:px-10 md:py-4 md:text-base
         ${hovered ? 'bg-white text-black' : 'bg-white/10 text-white'}

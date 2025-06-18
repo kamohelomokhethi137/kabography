@@ -93,7 +93,7 @@ function Home() {
               alt="Background"
               className="w-full h-full object-cover"
               style={{ filter: 'brightness(0.6) contrast(1.2)' }}
-              loading="lazy" // hint to lazy load images
+              loading="lazy" 
             />
           </motion.div>
         </AnimatePresence>
@@ -148,22 +148,23 @@ function Home() {
               </motion.span>
             ))}
           </motion.p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
-            <Button
-              href="#book"
-              icon={<FaArrowRight />}
-              className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
-            >
-              Book a Session
-            </Button>
-            <Button
-              href="/gallery"
-              icon={<FaImages />}
-              className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
-            >
-              Explore Portfolio
-            </Button>
-          </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
+  <Button
+    href="#book"
+    icon={<FaArrowRight />}
+    className="px-6 py-4 text-base sm:px-6 sm:py-3 sm:text-base"
+  >
+    Book a Session
+  </Button>
+  <Button
+    href="/gallery"
+    icon={<FaImages />}
+    className="px-6 py-4 text-base sm:px-6 sm:py-3 sm:text-base"
+  >
+    Explore Portfolio
+  </Button>
+</div>
+
 
         </motion.div>
 
