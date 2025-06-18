@@ -1,16 +1,22 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
+import { useEffect, useRef, useState, useCallback } from 'react';
 import images from '../data/galleryData';
 
-gsap.registerPlugin(ScrollTrigger);
+const fadeInStyle = {
+  opacity: 1,
+  transition: 'opacity 0.7s ease-in-out, transform 0.4s ease',
+  transform: 'scale(1)',
+};
+
+const hiddenStyle = {
+  opacity: 0,
+  transform: 'scale(0.95)',
+};
 
 const ArtisticGallery = () => {
-  const galleryRef = useRef(null);
   const [loaded, setLoaded] = useState(() => Array(images.length).fill(false));
-  const [showAllImages, setShowAllImages] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [modalImage, setModalImage] = useState(null);
+  const itemRefs = useRef([]);
 
   const handleImageLoad = useCallback((index) => {
     setLoaded((prev) => {
@@ -22,111 +28,199 @@ const ArtisticGallery = () => {
   }, []);
 
   useEffect(() => {
-    const visibleCount = showAllImages ? images.length : 5;
-    if (!loaded.slice(0, visibleCount).every(Boolean)) return;
-
-    const items = gsap.utils.toArray('.gallery-item');
-
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-
-    gsap.fromTo(items, 
-      { y: 60, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'power2.out',
-        stagger: 0.1,
-        scrollTrigger: {
-          trigger: galleryRef.current,
-          start: 'top 80%',
-        }
-      }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'scale(1)';
+            entry.target.style.transition = 'opacity 0.7s ease-in-out, transform 0.4s ease';
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 }
     );
 
-    items.forEach(item => {
-      const img = item.querySelector('img');
-      if (!img) return;
-
-      gsap.to(img, {
-        yPercent: -10,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: item,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        }
-      });
+    itemRefs.current.forEach((el) => {
+      if (el) {
+        el.style.opacity = 0;
+        el.style.transform = 'scale(0.95)';
+        observer.observe(el);
+      }
     });
 
-    return () => ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-  }, [loaded, showAllImages]);
+    return () => observer.disconnect();
+  }, [visibleCount]);
+
+  const handleViewMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 6, images.length));
+  };
 
   return (
-    <section className="relative py-20 px-4 bg-black text-white">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)]" />
-      </div>
+    <section style={{ backgroundColor: 'black', color: 'white', padding: '5rem 1rem', position: 'relative' }}>
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        background: 'radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%)',
+        zIndex: 0
+      }} />
 
-      <div
-        ref={galleryRef}
-        className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-      >
-        {(showAllImages ? images : images.slice(0, 6)).map((img, index) => (
-          <motion.div
-            key={img.src}
-            className="gallery-item relative aspect-[4/3] bg-neutral-900 overflow-hidden rounded-xl"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            {!loaded[index] && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10">
-                <div className="w-10 h-10 border-4 border-lime-400 border-t-transparent rounded-full animate-spin" />
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '1.5rem',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        {images.slice(0, visibleCount).map((img, index) => {
+          const isSelected = modalImage?.src === img.src;
+
+          return (
+            <div
+              key={img.src}
+              ref={(el) => (itemRefs.current[index] = el)}
+              onClick={() => setModalImage(img)}
+              style={{
+                ...hiddenStyle,
+                aspectRatio: '4 / 3',
+                borderRadius: '1rem',
+                backgroundColor: isSelected ? '#2563eb' : '#1a1a1a',
+                overflow: 'hidden',
+                cursor: 'pointer',
+                position: 'relative',
+                outline: isSelected ? '3px solid #3b82f6' : 'none'
+              }}
+            >
+              {!loaded[index] && (
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundColor: 'rgba(0,0,0,0.3)',
+                  zIndex: 10,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '4px solid #a3e635',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }} />
+                </div>
+              )}
+
+              <img
+                src={img.src}
+                alt={`Photo ${index + 1}`}
+                onLoad={() => handleImageLoad(index)}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  transition: 'opacity 0.7s ease-in',
+                  opacity: loaded[index] ? 1 : 0
+                }}
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
+
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                padding: '1rem',
+                background: 'linear-gradient(to top, rgba(0,0,0,0.6), transparent)'
+              }}>
+                <p style={{ fontSize: '0.9rem', fontWeight: '600' }}>{index + 1}</p>
               </div>
-            )}
-
-            <img
-              src={img.src}
-              alt={`Photo ${index + 1}`}
-              onLoad={() => handleImageLoad(index)}
-              className={`w-full h-full object-cover transition-opacity duration-700 ease-in ${loaded[index] ? 'opacity-100' : 'opacity-0'}`}
-              loading="lazy"
-              decoding="async"
-              fetchPriority={index < 5 ? 'high' : 'low'}
-              draggable={false}
-            />
-
-            <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-4">
-              <p className="text-sm font-semibold">{index + 1}</p>
             </div>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
 
-      {!showAllImages && (
-        <motion.div
-          className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+      {visibleCount < images.length && (
+        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
           <button
-            onClick={() => setShowAllImages(true)}
-            className="relative inline-flex items-center justify-center px-6 py-3 border border-lime-400 text-lime-400 rounded-full text-sm font-medium group overflow-hidden"
+            onClick={handleViewMore}
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: '9999px',
+              border: '1px solid #a3e635',
+              color: '#a3e635',
+              background: 'transparent',
+              fontWeight: 500,
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#000'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
           >
-            <span className="relative z-10 group-hover:text-black transition-colors">VIEW ALL</span>
-            <motion.span
-              className="absolute inset-0 bg-lime-400 z-0"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: '0%' }}
-              transition={{ duration: 0.5 }}
-            />
+            VIEW MORE
           </button>
-        </motion.div>
+        </div>
       )}
+
+      {modalImage && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 50,
+          padding: '1rem'
+        }}>
+          <div style={{
+            backgroundColor: '#1a1a1a',
+            borderRadius: '1rem',
+            padding: '2rem',
+            maxWidth: '800px',
+            width: '100%',
+            textAlign: 'center'
+          }}>
+            <img
+              src={modalImage.src}
+              alt="Selected"
+              style={{
+                maxHeight: '60vh',
+                width: '100%',
+                objectFit: 'contain',
+                borderRadius: '0.75rem',
+                marginBottom: '1.5rem'
+              }}
+            />
+            <p style={{ fontSize: '1.125rem', fontWeight: '600', color: 'white', marginBottom: '1rem' }}>Image selected</p>
+            <button
+              onClick={() => setModalImage(null)}
+              style={{
+                padding: '0.5rem 1.5rem',
+                backgroundColor: '#a3e635',
+                color: '#000',
+                borderRadius: '9999px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </section>
   );
 };
