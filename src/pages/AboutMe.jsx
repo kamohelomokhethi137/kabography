@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import SplitText from '../animation/SplitText';
 import AboutImage from '../assets/about/about.jpg';
 
 const AboutMe = () => {
@@ -35,14 +36,18 @@ const AboutMe = () => {
         {/* TEXT COLUMN */}
         <div className="relative z-10 space-y-8">
           <div className="relative inline-block">
-            <motion.h2
-              className="text-4xl sm:text-5xl md:text-6xl font-bold"
-              style={{ opacity }}
-            >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
-                About Us
-              </span>
-            </motion.h2>
+            <SplitText
+              text="ABOUT US"
+              className="text-3xl sm:text-4xl font-bold text-center"
+              delay={100}
+              duration={0.6}
+              ease="power3.out"
+              splitType="chars"
+              from={{ opacity: 0, y: 40 }}
+              to={{ opacity: 1, y: 0 }}
+              threshold={0.1}
+              rootMargin="-100px"
+              textAlign="center" />
             <motion.div
               className="absolute bottom-0 left-0 h-1 bg-white origin-left"
               style={{

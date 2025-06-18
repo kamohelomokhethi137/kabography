@@ -87,9 +87,9 @@ const Footer = () => {
               <a href="https://api.whatsapp.com/send/?phone=26653182775&text=Hello%2C%20I%20would%20like%20to%20book%20a%20photoshoot%20session%20with%20you.&type=phone_number&app_absent=0" className="hover:text-white">
                 <FaWhatsapp />
               </a>
-              <a href="" className="hover:text-white">
+              {/* <a href="" className="hover:text-white">
                 <FaYoutube />
-              </a>
+              </a> */}
             </div>
           </motion.div>
         </div>
