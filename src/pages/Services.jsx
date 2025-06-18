@@ -1,4 +1,4 @@
-import Footer from '../components/Footer';
+// import Footer from '../components/Footer';
 import { FiCamera, FiEdit, FiImage, FiLayout } from 'react-icons/fi';
 import ServiceCard from '../components/ServiceCard';
 import TrueFocus from '../components/TrueFocus';
@@ -16,6 +16,7 @@ const services = [
     icon: <FiEdit size={26} />,
     description:
       'Transform your photos with expert retouching, color correction, and artistic enhancements.',
+      
   },
   {
     title: 'Prints for Sale',
@@ -28,6 +29,7 @@ const services = [
     icon: <FiLayout size={26} />,
     description:
       'We help you design stunning gallery walls using curated photography, thoughtful layout planning, and expert visual storytelling.',
+    link: '/artgallery',
   }
 ];
 
@@ -58,7 +60,7 @@ const Services = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 

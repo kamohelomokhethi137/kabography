@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useTransform, useScroll, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaImages, FaArrowUp } from 'react-icons/fa';
 
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+// import Navbar from '../components/Navbar';
+// import Footer from '../components/Footer';
 import PinterestGrid from '../components/ArtisticGallery';
 
 import AboutMe from './AboutMe';
@@ -104,7 +104,7 @@ function Home() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4yIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6Ii8+PC9nPjwvZz48L3N2Zz4=')]"/>
       </div>
 
-      <Navbar />
+      {/* <Navbar /> */}
 
       {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-center justify-center h-[70vh] sm:min-h-screen text-center px-4 pt-20 sm:pt-36">
@@ -216,7 +216,7 @@ function Home() {
 
       <AboutMe />
       <PinterestGrid />
-      <Footer />
+      {/* <Footer /> */}
 
       {/* Scroll to Top Button */}
       <AnimatePresence>

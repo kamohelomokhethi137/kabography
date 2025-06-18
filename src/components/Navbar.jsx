@@ -81,26 +81,26 @@ const Navbar = () => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="fixed w-full z-50 text-white"
     >
-      {/* Glass Dark Background */}
-      <div className="absolute inset-0 backdrop-blur-md bg-black/70 border-b border-white/10" />
+      {/* Frosted Glass Background */}
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-xl border-b border-white/20 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)]" />
 
       <div className="relative max-w-7xl mx-auto px-6 py-4 flex items-center justify-between md:justify-center">
         {/* Mobile Logo */}
         <div
-          className="block md:hidden text-2xl"
+          className="block md:hidden text-2xl z-50"
           style={{ fontFamily: "'Great Vibes', cursive" }}
         >
           Kabography
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-20">
+        <div className="hidden md:flex items-center gap-20 z-10">
           <div className="flex gap-10">
             {navItems.slice(0, 3).map((item) => (
               <a
                 key={item.name}
                 href={item.path}
-                className="flex items-center gap-2 hover:text-gray-300 transition"
+                className="flex items-center gap-2 hover:text-white/90 transition duration-200 ease-in-out hover:scale-105"
               >
                 {item.icon}
                 <span>{item.name}</span>
@@ -122,7 +122,7 @@ const Navbar = () => {
               <a
                 key={item.name}
                 href={item.path}
-                className="flex items-center gap-2 hover:text-gray-300 transition"
+                className="flex items-center gap-2 hover:text-white/90 transition duration-200 ease-in-out hover:scale-105"
               >
                 {item.icon}
                 <span>{item.name}</span>
@@ -142,7 +142,7 @@ const Navbar = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="absolute top-full left-0 w-full bg-black/90 backdrop-blur-md px-6 py-4 flex flex-col gap-4 md:hidden"
+              className="absolute top-full left-0 w-full bg-black/40 backdrop-blur-2xl border-t border-white/10 shadow-md shadow-white/5 px-6 py-6 flex flex-col gap-5 md:hidden rounded-b-2xl z-40"
               initial="closed"
               animate="open"
               exit="closed"
@@ -152,7 +152,7 @@ const Navbar = () => {
                 <motion.a
                   key={item.name}
                   href={item.path}
-                  className="flex items-center gap-2 text-white hover:text-gray-300 transition"
+                  className="flex items-center gap-2 text-white hover:text-white/90 transition duration-200 ease-in-out hover:scale-105"
                   variants={linkVariants}
                   onClick={() => setIsMenuOpen(false)} // close menu on click
                 >

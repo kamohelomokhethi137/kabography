@@ -1,9 +1,10 @@
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { Link } from 'react-router-dom'; // ✅ React Router for internal links
 
 const particles = new Array(18).fill(0);
 
-const ServiceCard = ({ icon, title, description }) => {
+const ServiceCard = ({ icon, title, description, link }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -16,7 +17,7 @@ const ServiceCard = ({ icon, title, description }) => {
       viewport={{ once: true }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      {/* Animated Artistic Background */}
+      {/* Floating particles */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {particles.map((_, i) => (
           <motion.div
@@ -43,26 +44,29 @@ const ServiceCard = ({ icon, title, description }) => {
         ))}
       </div>
 
-      {/* Foreground Content */}
+      {/* Foreground content */}
       <div className="relative z-10">
         <div className="mb-4 w-12 h-12 flex items-center justify-center rounded-full bg-white/5 border border-white/20 backdrop-blur-sm">
           {icon}
         </div>
+
         <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
         <p className="text-sm text-white/70 mb-5 leading-relaxed">{description}</p>
 
-        {/* Learn More Button */}
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          className="relative px-5 py-2 text-sm text-white rounded-full border border-white/20 overflow-hidden group transition-all duration-300"
-        >
-          <span className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 to-white/5 group-hover:opacity-20 transition duration-300" />
-          <motion.span
-            className="absolute bottom-0 left-0 h-0.5 bg-white w-full scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"
-            layoutId="underline"
-          />
-          <span className="relative z-10">Learn More</span>
-        </motion.button>
+        {/* Internal link using react-router */}
+        <Link to={link}>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="relative px-5 py-2 text-sm text-white rounded-full border border-white/20 overflow-hidden group transition-all duration-300"
+          >
+            <span className="absolute inset-0 rounded-full bg-gradient-to-br from-white/10 to-white/5 group-hover:opacity-20 transition duration-300" />
+            <motion.span
+              className="absolute bottom-0 left-0 h-0.5 bg-white w-full scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300"
+              layoutId="underline"
+            />
+            <span className="relative z-10">Learn More</span>
+          </motion.button>
+        </Link>
       </div>
     </motion.div>
   );
