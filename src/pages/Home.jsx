@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useTransform, useScroll, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaImages, FaArrowUp } from 'react-icons/fa';
+
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import PinterestGrid from '../components/ArtisticGallery';
 
 import AboutMe from './AboutMe';
+
 import BlurText from '../animation/BlurText';
-import PinterestGrid from '../components/ArtisticGallery';
+import Button from '../animation/Button';
 
 import image1 from '../assets/intro/1.jpg';
 import image2 from '../assets/intro/2.jpg';
@@ -145,15 +148,23 @@ function Home() {
               </motion.span>
             ))}
           </motion.p>
-
           <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-6">
-            <HolographicButton href="#book" icon={<FaArrowRight />} className="bg-white/10">
-              BOOK A SESSION
-            </HolographicButton>
-            <HolographicButton href="#gallery" icon={<FaImages />} className="bg-white/10">
-              EXPLORE PORTFOLIO
-            </HolographicButton>
+            <Button
+              href="#book"
+              icon={<FaArrowRight />}
+              className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
+            >
+              Book a Session
+            </Button>
+            <Button
+              href="/gallery"
+              icon={<FaImages />}
+              className="px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base"
+            >
+              Explore Portfolio
+            </Button>
           </div>
+
         </motion.div>
 
         {/* Carousel Indicators */}
