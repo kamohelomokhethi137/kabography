@@ -1,14 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useTransform, useScroll, AnimatePresence } from 'framer-motion';
 import { FaArrowRight, FaImages, FaArrowUp } from 'react-icons/fa';
-import LiquidLoader from '../animation/LiquidLoader';
-
 import PinterestGrid from '../components/ArtisticGallery';
 import AboutMe from './AboutMe';
-
 import BlurText from '../animation/BlurText';
 import Button from '../animation/Button';
-
 import image1 from '../assets/intro/1.jpg';
 import image2 from '../assets/intro/2.jpg';
 import image3 from '../assets/intro/3.jpg';
@@ -38,23 +34,13 @@ const HolographicButton = ({ children, icon, ...props }) => (
 );
 
 function Home() {
-  // --- Loader state ---
-  const [loading, setLoading] = useState(true);
-
-  // --- Carousel index ---
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  // --- Scroll to top button visibility ---
   const [showScrollToTop, setShowScrollToTop] = useState(false);
-
-  // --- Ref for scroll container ---
   const containerRef = useRef(null);
 
-  // Scroll progress hooked to containerRef
   const { scrollYProgress } = useScroll({ target: containerRef });
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
-  // Carousel interval effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
@@ -62,37 +48,23 @@ function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Scroll event handler
   const handleScroll = useCallback(() => {
     setShowScrollToTop(window.scrollY > 400);
   }, []);
 
-  // Add/remove scroll event listener
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
-  // Hide loader after 1.2 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Scroll to top function
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // While loading, show the LiquidLoader only
-  if (loading) return <LiquidLoader onFinish={() => setLoading(false)} />;
-
   return (
     <div className="relative min-h-screen overflow-hidden" ref={containerRef}>
       {/* Background Carousel */}
-      <motion.div
+      <motion.div 
         className="fixed inset-0 -z-10 h-[70vh] sm:h-full"
         style={{ y }}
       >
@@ -110,7 +82,7 @@ function Home() {
               alt="Background"
               className="w-full h-full object-cover"
               style={{ filter: 'brightness(0.6) contrast(1.2)' }}
-              loading="lazy"
+              loading="lazy" 
             />
           </motion.div>
         </AnimatePresence>
@@ -138,7 +110,7 @@ function Home() {
               direction="top"
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center"
             />
-            <motion.div
+            <motion.div 
               className="absolute inset-0 bg-white blur-xl opacity-20 pointer-events-none"
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 0.2 }}
@@ -146,7 +118,7 @@ function Home() {
             />
           </div>
 
-          <motion.p
+          <motion.p 
             className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-bold tracking-wider"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -182,7 +154,7 @@ function Home() {
         </motion.div>
 
         {/* Carousel Indicators */}
-        <motion.div
+        <motion.div 
           className="absolute bottom-4 sm:bottom-10 left-0 right-0 flex justify-center gap-2 sm:gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -196,16 +168,16 @@ function Home() {
               aria-label={`View slide ${index + 1}`}
             >
               <svg width="30" height="12" viewBox="0 0 30 12" className="sm:w-10">
-                <rect
-                  x="0" y="0"
-                  width="100%" height="2"
-                  fill="currentColor"
+                <rect 
+                  x="0" y="0" 
+                  width="100%" height="2" 
+                  fill="currentColor" 
                   className={`transition-all ${index === currentImageIndex ? 'text-white h-2' : 'text-gray-500 h-1'}`}
                 />
-                <rect
-                  x="0" y="10"
-                  width="100%" height="2"
-                  fill="currentColor"
+                <rect 
+                  x="0" y="10" 
+                  width="100%" height="2" 
+                  fill="currentColor" 
                   className={`transition-all ${index === currentImageIndex ? 'text-white h-2' : 'text-gray-500 h-1'}`}
                 />
               </svg>
@@ -229,7 +201,6 @@ function Home() {
 
       <AboutMe />
       <PinterestGrid />
-      {/* <Footer /> */}
 
       {/* Scroll to Top Button */}
       <AnimatePresence>
