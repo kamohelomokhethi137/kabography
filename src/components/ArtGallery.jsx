@@ -124,24 +124,27 @@ const ArtGallery = () => {
                 <AnimatePresence>
                   {hoveredCard === item.id && (
                     <motion.div
-                      className="absolute inset-0 flex items-center justify-center gap-4 bg-white/20 backdrop-blur-sm"
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/20 backdrop-blur-sm"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <button className="p-3 bg-white rounded-full shadow hover:scale-110 transition">
-                        <FiZoomIn size={20} />
-                      </button>
-                      <button
-                        className="p-3 bg-white rounded-full shadow hover:scale-110 transition"
-                        onClick={() => toggleLike(item.id)}
-                      >
-                        <FiHeart
-                          size={20}
-                          className={item.liked ? 'text-red-500 fill-red-500' : 'text-gray-700'}
-                        />
-                      </button>
+                      <span className="bg-white text-black px-3 py-1 rounded-full text-sm font-semibold shadow">${item.price}</span>
+                      <div className="flex gap-4">
+                        <button className="p-3 bg-white rounded-full shadow hover:scale-110 transition">
+                          <FiZoomIn size={20} />
+                        </button>
+                        <button
+                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition"
+                          onClick={() => toggleLike(item.id)}
+                        >
+                          <FiHeart
+                            size={20}
+                            className={item.liked ? 'text-red-500 fill-red-500' : 'text-gray-700'}
+                          />
+                        </button>
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
