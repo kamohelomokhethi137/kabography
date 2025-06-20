@@ -6,7 +6,6 @@ import Image2 from '../assets/Art/1.webp';
 import Image3 from '../assets/Art/2.webp';
 import Image4 from '../assets/Art/3.webp';
 import Image5 from '../assets/Art/4.webp';
-import Image6 from '../assets/Art/5.webp';
 import Image9 from '../assets/Art/9.webp';
 
 const ArtGallery = () => {
@@ -73,6 +72,7 @@ const ArtGallery = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-12">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Art Gallery Wall</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -85,13 +85,13 @@ const ArtGallery = () => {
           <button className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition">
             All
           </button>
-          <button className="px-4 py-2 border  bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
+          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
             Landscape
           </button>
-          <button className="px-4 py-2 border  bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
+          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
             Abstract
           </button>
-          <button className="px-4 py-2 border  bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
+          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
             Portrait
           </button>
         </div>
@@ -118,6 +118,7 @@ const ArtGallery = () => {
                   animate={{ scale: hoveredCard === item.id ? 1.05 : 1 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 20 }}
                   loading="lazy"
+                  draggable={false}
                 />
 
                 {/* Hover Actions */}
@@ -130,14 +131,40 @@ const ArtGallery = () => {
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <span className="bg-white text-black px-3 py-1 rounded-full text-sm font-semibold shadow">${item.price}</span>
+                      <motion.span
+                        className="bg-white text-black px-4 py-1 rounded-full text-base font-extrabold shadow-lg select-none"
+                        initial={{ scale: 1, color: '#000000', textShadow: '0 0 0 rgba(0,0,0,0)' }}
+                        animate={{
+                          scale: [1, 1.1, 1],
+                          color: ['#000000', '#f59e0b', '#000000'],
+                          textShadow: [
+                            '0 0 0 rgba(0,0,0,0)',
+                            '0 0 8px rgba(245, 158, 11, 0.8)',
+                            '0 0 0 rgba(0,0,0,0)',
+                          ],
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          repeatType: 'loop',
+                          ease: 'easeInOut',
+                        }}
+                      >
+                        ${item.price}
+                      </motion.span>
                       <div className="flex gap-4">
-                        <button className="p-3 bg-white rounded-full shadow hover:scale-110 transition">
+                        <button
+                          aria-label={`Zoom in on ${item.title}`}
+                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition-transform"
+                          type="button"
+                        >
                           <FiZoomIn size={20} />
                         </button>
                         <button
-                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition"
+                          aria-label={`Toggle like on ${item.title}`}
+                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition-transform"
                           onClick={() => toggleLike(item.id)}
+                          type="button"
                         >
                           <FiHeart
                             size={20}
@@ -160,8 +187,12 @@ const ArtGallery = () => {
                   <span className="font-bold text-lg">${item.price}</span>
                 </div>
 
-                <button className="mt-4 w-full flex items-center justify-center gap-2 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition">
-                  <FiShoppingCart /> Add to Cart
+                <button
+                  type="button"
+                  className="mt-4 w-full flex items-center justify-center gap-2 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
+                >
+                  <FiShoppingCart />
+                  Add to Cart
                 </button>
               </div>
             </motion.div>
