@@ -13,7 +13,7 @@ import Services from "./pages/Services.jsx";
 import Contact from "./pages/Contact.jsx";
 import ArtGallery from "./components/ArtGallery.jsx";
 
-// Optional: Lazy-load components
+
 // const Home = lazy(() => import('./pages/Home.jsx'));
 // const Gallery = lazy(() => import('./pages/Gallery.jsx'));
 // const Book = lazy(() => import('./pages/Book.jsx'));
@@ -30,7 +30,7 @@ createRoot(document.getElementById("root")).render(
       
             <Route index element={<Navigate to="/home" replace />} />
 
-            {/* Main pages */}
+     
             <Route path="home" element={<Home />} />
             <Route path="book" element={<Book />} />
             <Route path="gallery" element={<Gallery />} />
@@ -38,10 +38,8 @@ createRoot(document.getElementById("root")).render(
             <Route path="contact" element={<Contact />} />
             <Route path="artgallery" element={<ArtGallery />} />
 
-            {/* Fallback 404 */}
-            <Route
-              path="*"
-              element={
+        
+            <Route path="*" element={
                 <div className="text-center text-white py-20 text-xl font-semibold">
                   404 - Page Not Found
                 </div>
