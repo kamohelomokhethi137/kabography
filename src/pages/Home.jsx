@@ -36,15 +36,29 @@ const HolographicButton = ({ children, icon, ...props }) => (
 function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const containerRef = useRef(null);
 
-  const { scrollYProgress } = useScroll({ target: containerRef });
+  const { scrollYProgress } = useScroll({ 
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   useEffect(() => {
+    // Check if fonts are loaded
+    if (typeof document !== 'undefined' && document.fonts) {
+      document.fonts.ready.then(() => {
+        setFontsLoaded(true);
+      });
+    } else {
+      setFontsLoaded(true); // Fallback if document.fonts not available
+    }
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 5000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -61,8 +75,20 @@ function Home() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  if (!fontsLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-black">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative min-h-screen overflow-hidden" ref={containerRef}>
+    <div 
+      className="relative min-h-screen overflow-hidden" 
+      ref={containerRef}
+      style={{ position: 'relative' }}
+    >
       {/* Background Carousel */}
       <motion.div 
         className="fixed inset-0 -z-10 h-[70vh] sm:h-full"
@@ -82,7 +108,7 @@ function Home() {
               alt="Background"
               className="w-full h-full object-cover"
               style={{ filter: 'brightness(0.6) contrast(1.2)' }}
-              loading="lazy" 
+              loading="lazy"
             />
           </motion.div>
         </AnimatePresence>
@@ -118,7 +144,7 @@ function Home() {
             />
           </div>
 
-          <motion.p 
+          <motion.p
             className="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-12 max-w-2xl mx-auto font-bold tracking-wider"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -169,15 +195,15 @@ function Home() {
             >
               <svg width="30" height="12" viewBox="0 0 30 12" className="sm:w-10">
                 <rect 
-                  x="0" y="0" 
-                  width="100%" height="2" 
-                  fill="currentColor" 
+                  x="0" y="0"
+                  width="100%" height="2"
+                  fill="currentColor"
                   className={`transition-all ${index === currentImageIndex ? 'text-white h-2' : 'text-gray-500 h-1'}`}
                 />
                 <rect 
-                  x="0" y="10" 
-                  width="100%" height="2" 
-                  fill="currentColor" 
+                  x="0" y="10"
+                  width="100%" height="2"
+                  fill="currentColor"
                   className={`transition-all ${index === currentImageIndex ? 'text-white h-2' : 'text-gray-500 h-1'}`}
                 />
               </svg>
