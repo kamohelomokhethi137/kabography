@@ -8,16 +8,16 @@ import "./index.css";
 
 import Home from "./pages/Home.jsx";
 import Book from "./pages/Book.jsx";
-import Gallery from "./pages/Gallery.jsx";
-import Services from "./pages/Services.jsx";
+// import Gallery from "./pages/Gallery.jsx";
+// import Services from "./pages/Services.jsx";
 import Contact from "./pages/Contact.jsx";
 import ArtGallery from "./components/ArtGallery.jsx";
 
 
 // const Home = lazy(() => import('./pages/Home.jsx'));
-// const Gallery = lazy(() => import('./pages/Gallery.jsx'));
+const Gallery = lazy(() => import('./pages/Gallery.jsx'));
 // const Book = lazy(() => import('./pages/Book.jsx'));
-// const Services = lazy(() => import('./pages/Services.jsx'));
+const Services = lazy(() => import('./pages/Services.jsx'));
 // const Contact = lazy(() => import('./pages/Contact.jsx'));
 
 createRoot(document.getElementById("root")).render(
