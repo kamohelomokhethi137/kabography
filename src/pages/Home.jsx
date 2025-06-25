@@ -7,7 +7,7 @@ import BlurText from '../animation/BlurText';
 import Button from '../animation/Button';
 import image1 from '../assets/intro/1.jpg';
 import image2 from '../assets/intro/2.jpg';
-import image3 from '../assets/intro/3.jpg';
+import image3 from '../assets/intro/3.webp';
 
 const heroImages = [image1, image2, image3];
 
