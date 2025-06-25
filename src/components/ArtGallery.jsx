@@ -1,6 +1,7 @@
-import { FiShoppingCart, FiHeart, FiZoomIn } from 'react-icons/fi';
+import { FiShoppingCart, FiHeart } from 'react-icons/fi';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 import Image1 from '../assets/Art/0.webp';
 import Image2 from '../assets/Art/1.webp';
 import Image3 from '../assets/Art/2.webp';
@@ -9,7 +10,8 @@ import Image5 from '../assets/Art/4.webp';
 import Image9 from '../assets/Art/9.webp';
 
 const ArtGallery = () => {
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [filter, setFilter] = useState('All');
+  const [selectedItem, setSelectedItem] = useState(null);
   const [galleryItems, setGalleryItems] = useState([
     {
       id: 1,
@@ -61,6 +63,10 @@ const ArtGallery = () => {
     },
   ]);
 
+  const filteredItems = galleryItems.filter(item =>
+    filter === 'All' ? true : item.category === filter
+  );
+
   const toggleLike = (id) => {
     setGalleryItems((prevItems) =>
       prevItems.map((item) =>
@@ -80,125 +86,116 @@ const ArtGallery = () => {
           </p>
         </div>
 
-        {/* Filter Options */}
-        <div className="flex justify-center mb-8 gap-4 flex-wrap">
-          <button className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition">
-            All
-          </button>
-          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
-            Landscape
-          </button>
-          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
-            Abstract
-          </button>
-          <button className="px-4 py-2 border bg-black border-gray-300 rounded-lg hover:bg-gray-800 transition">
-            Portrait
-          </button>
+        {/* Category Filter */}
+        <div className="flex justify-center mb-8 gap-3 flex-wrap">
+          {['All', 'Landscape', 'Cityscape', 'Nature', 'Abstract', 'Portrait'].map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilter(cat)}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                filter === cat ? 'bg-black text-white' : 'bg-gray-200 text-gray-700'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {galleryItems.map((item) => (
+          {filteredItems.map((item) => (
             <motion.div
               key={item.id}
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: item.id * 0.1 }}
-              className="bg-white rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 relative group"
-              onMouseEnter={() => setHoveredCard(item.id)}
-              onMouseLeave={() => setHoveredCard(null)}
+              className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 relative cursor-pointer"
+              onClick={() => setSelectedItem(item)}
             >
-              {/* Image Container */}
-              <div className="relative overflow-hidden h-64">
-                <motion.img
+              {/* Image */}
+              <div className="relative h-64 w-full">
+                <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105"
-                  initial={{ scale: 1 }}
-                  animate={{ scale: hoveredCard === item.id ? 1.05 : 1 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+                  className="w-full h-full object-cover"
                   loading="lazy"
                   draggable={false}
                 />
-
-                {/* Hover Actions */}
-                <AnimatePresence>
-                  {hoveredCard === item.id && (
-                    <motion.div
-                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/20 backdrop-blur-sm"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <motion.span
-                        className="bg-white text-black px-4 py-1 rounded-full text-base font-extrabold shadow-lg select-none"
-                        initial={{ scale: 1, color: '#000000', textShadow: '0 0 0 rgba(0,0,0,0)' }}
-                        animate={{
-                          scale: [1, 1.1, 1],
-                          color: ['#000000', '#f59e0b', '#000000'],
-                          textShadow: [
-                            '0 0 0 rgba(0,0,0,0)',
-                            '0 0 8px rgba(245, 158, 11, 0.8)',
-                            '0 0 0 rgba(0,0,0,0)',
-                          ],
-                        }}
-                        transition={{
-                          duration: 1.5,
-                          repeat: Infinity,
-                          repeatType: 'loop',
-                          ease: 'easeInOut',
-                        }}
-                      >
-                        ${item.price}
-                      </motion.span>
-                      <div className="flex gap-4">
-                        <button
-                          aria-label={`Zoom in on ${item.title}`}
-                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition-transform"
-                          type="button"
-                        >
-                          <FiZoomIn size={20} />
-                        </button>
-                        <button
-                          aria-label={`Toggle like on ${item.title}`}
-                          className="p-3 bg-white rounded-full shadow hover:scale-110 transition-transform"
-                          onClick={() => toggleLike(item.id)}
-                          type="button"
-                        >
-                          <FiHeart
-                            size={20}
-                            className={item.liked ? 'text-red-500 fill-red-500' : 'text-gray-700'}
-                          />
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
 
               {/* Card Details */}
               <div className="p-6">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start mb-2">
                   <div>
                     <h3 className="font-bold text-xl text-gray-900">{item.title}</h3>
-                    <p className="text-gray-500">{item.category}</p>
+                    <p className="text-sm text-gray-500">{item.category}</p>
                   </div>
-                  <span className="font-bold text-lg">${item.price}</span>
+                  <div className="text-right">
+                    <span className="text-lg font-semibold text-green-600">
+                      R {item.price}
+                    </span>
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="mt-4 w-full flex items-center justify-center gap-2 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
-                >
-                  <FiShoppingCart />
-                  Add to Cart
-                </button>
+                <div className="flex items-center justify-between mt-4">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition"
+                  >
+                    <FiShoppingCart />
+                    Add to Cart
+                  </button>
+                  <button
+                    type="button"
+                    aria-label={`Toggle like on ${item.title}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleLike(item.id);
+                    }}
+                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                  >
+                    <FiHeart
+                      size={20}
+                      className={item.liked ? 'text-red-500 fill-red-500' : 'text-gray-500'}
+                    />
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
       </main>
+
+      {/* Modal Preview */}
+      <AnimatePresence>
+        {selectedItem && (
+          <motion.div
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="bg-white rounded-xl shadow-xl relative max-w-md w-full mx-4 overflow-hidden">
+              <button
+                onClick={() => setSelectedItem(null)}
+                className="absolute top-2 right-2 text-gray-600 hover:text-black text-2xl z-10"
+              >
+                &times;
+              </button>
+              <img
+                src={selectedItem.image}
+                alt={selectedItem.title}
+                className="w-full object-cover h-80"
+              />
+              <div className="p-6">
+                <h2 className="text-xl font-bold text-gray-900">{selectedItem.title}</h2>
+                <p className="text-gray-500">{selectedItem.category}</p>
+                <p className="text-green-600 text-lg font-semibold mt-2">R {selectedItem.price}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

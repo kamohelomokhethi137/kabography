@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom'; // ✅ React Router for internal links
+import { Link } from 'react-router-dom'; 
 
 const particles = new Array(18).fill(0);
 
@@ -53,7 +53,6 @@ const ServiceCard = ({ icon, title, description, link }) => {
         <h3 className="text-lg font-semibold mb-2 text-white">{title}</h3>
         <p className="text-sm text-white/70 mb-5 leading-relaxed">{description}</p>
 
-        {/* Internal link using react-router */}
         <Link to={link}>
           <motion.button
             whileTap={{ scale: 0.95 }}
