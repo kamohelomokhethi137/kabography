@@ -24,32 +24,36 @@ import Image24 from '../assets/gallery/24.webp';
 import Image25 from '../assets/gallery/25.webp';
 
 const images = [
-  { src: Image1, width: 800, height: 1200 },
-   { src: Image3, width: 800, height: 1200 },
-  { src: Image25, width: 1200, height: 800 },
- 
-  { src: Image4, width: 1200, height: 800 },
-  { src: Image5, width: 800, height: 1200 },
-  { src: Image6, width: 1200, height: 800 },
-  { src: Image7, width: 800, height: 1200 },
-  { src: Image8, width: 1200, height: 800 },
-  { src: Image9, width: 800, height: 1200 },
-  { src: Image10, width: 1200, height: 800 },
-  { src: Image11, width: 800, height: 1200 },
-  { src: Image12, width: 1200, height: 800 },
-  { src: Image13, width: 800, height: 1200 },
-  { src: Image14, width: 1200, height: 800 },
-  { src: Image15, width: 800, height: 1200 },
-  { src: Image16, width: 1200, height: 800 },
-  { src: Image17, width: 800, height: 1200 },
-  { src: Image18, width: 1200, height: 800 },
-  { src: Image19, width: 800, height: 1200 },
-  { src: Image20, width: 1200, height: 1200 },
-  { src: Image21, width: 800, height: 1200 },
-  { src: Image23, width: 1200, height: 800 },
-  { src: Image24, width: 800, height: 1200 },
-    { src: Image2, width: 1200, height: 800 },
-
+  {
+    src: Image1,
+    width: 800,
+    height: 1200,
+    category: 'portrait'
+  }
+  ,
+  { src: Image2, width: 1200, height: 800, category: 'wedding' },
+  { src: Image3, width: 800, height: 1200, category: 'personal' },
+  { src: Image4, width: 1200, height: 800, category: 'landscape' },
+  { src: Image5, width: 800, height: 1200, category: 'nature' },
+  { src: Image6, width: 1200, height: 800, category: 'wedding' },
+  { src: Image7, width: 800, height: 1200, category: 'portrait' },
+  { src: Image8, width: 1200, height: 800, category: 'landscape' },
+  { src: Image9, width: 800, height: 1200, category: 'personal' },
+  { src: Image10, width: 1200, height: 800, category: 'nature' },
+  { src: Image11, width: 800, height: 1200, category: 'wedding' },
+  { src: Image12, width: 1200, height: 800, category: 'landscape' },
+  { src: Image13, width: 800, height: 1200, category: 'portrait' },
+  { src: Image14, width: 1200, height: 800, category: 'nature' },
+  { src: Image15, width: 800, height: 1200, category: 'personal' },
+  { src: Image16, width: 1200, height: 800, category: 'wedding' },
+  { src: Image17, width: 800, height: 1200, category: 'portrait' },
+  { src: Image18, width: 1200, height: 800, category: 'landscape' },
+  { src: Image19, width: 800, height: 1200, category: 'nature' },
+  { src: Image20, width: 1200, height: 1200, category: 'wedding' },
+  { src: Image21, width: 800, height: 1200, category: 'personal' },
+  { src: Image23, width: 1200, height: 800, category: 'landscape' },
+  { src: Image24, width: 800, height: 1200, category: 'portrait' },
+  { src: Image25, width: 1200, height: 800, category: 'nature' }
 ];
 
 export default images;
