@@ -119,13 +119,13 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-6 mt-6 text-center">
           <p className="text-gray-400 mb-3">Contact the developer of this site:</p>
           <div className="flex justify-center space-x-5 text-2xl text-gray-400">
-            <a href="https://facebook.com/yourprofile" className="hover:text-white">
+            <a href="https://www.facebook.com/kamohelo.mokhethi.712" className="hover:text-white">
               <FaFacebook />
             </a>
             <a href="https://api.whatsapp.com/send/?phone=26657736313" className="hover:text-white">
               <FaWhatsapp />
             </a>
-            <a href="https://linkedin.com/in/yourprofile" className="hover:text-white">
+            <a href="https://www.linkedin.com/in/kamohelo-mokhethi-b99b12365?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" className="hover:text-white">
               <FaLinkedin />
             </a>
             <a href="https://github.com/kamohelomokhethi137" className="hover:text-white">
