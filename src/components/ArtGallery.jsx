@@ -15,7 +15,7 @@ const ArtGallery = () => {
   const [galleryItems, setGalleryItems] = useState([
     {
       id: 1,
-      title: 'Ocean Waves',
+      title: 'Lesotho Shepherds',
       image: Image1,
       price: 199,
       category: 'Landscape',
@@ -23,7 +23,7 @@ const ArtGallery = () => {
     },
     {
       id: 2,
-      title: 'Urban Dreams',
+      title: 'Maseru city & canyons',
       image: Image2,
       price: 249,
       category: 'Cityscape',
@@ -31,7 +31,7 @@ const ArtGallery = () => {
     },
     {
       id: 3,
-      title: 'Mountain Peak',
+      title: 'Lesotho Group frames',
       image: Image3,
       price: 179,
       category: 'Nature',
@@ -39,7 +39,7 @@ const ArtGallery = () => {
     },
     {
       id: 4,
-      title: 'Abstract Thoughts',
+      title: 'Qiloane & Mohale Dam',
       image: Image4,
       price: 299,
       category: 'Abstract',
@@ -47,7 +47,7 @@ const ArtGallery = () => {
     },
     {
       id: 5,
-      title: 'Golden Sunset',
+      title: 'Lesotho animals',
       image: Image5,
       price: 219,
       category: 'Landscape',
@@ -55,7 +55,7 @@ const ArtGallery = () => {
     },
     {
       id: 6,
-      title: 'Silhouette',
+      title: 'Lesotho Shepherds',
       image: Image9,
       price: 159,
       category: 'Portrait',
