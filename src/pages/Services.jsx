@@ -29,7 +29,7 @@ const services = [
     icon: <FiLayout size={26} />,
     description:
       'We help you design stunning gallery walls using curated photography, thoughtful layout planning, and expert visual storytelling.',
-    link: '/artgallery',
+    link: '/shop',
   }
 ];
 

@@ -1,4 +1,4 @@
-import { FiShoppingCart, FiHeart, FiX } from 'react-icons/fi';
+import { FiShoppingCart, FiHeart, FiX, FiFilter } from 'react-icons/fi';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -10,10 +10,13 @@ import Image5 from '../assets/Art/4.webp';
 import Image9 from '../assets/Art/9.webp';
 
 const ArtGallery = () => {
+  const [filterOpen, setFilterOpen] = useState(false);
   const [filter, setFilter] = useState('All');
   const [selectedItem, setSelectedItem] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
+
+  const categories = ['All', 'Landscape', 'Cityscape', 'Nature', 'Abstract', 'Portrait'];
 
   const [galleryItems, setGalleryItems] = useState([
     { id: 1, title: 'Lesotho Shepherds', image: Image1, price: 199, category: 'Landscape', liked: false },
@@ -63,28 +66,66 @@ const ArtGallery = () => {
   const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-12 relative">
+    <div className="min-h-screen relative bg-gray-50">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Art Gallery Wall</h1>
+        <div className="text-center mb-10">
+          <h1 className="text-4xl font-bold text-gray-900">Art Gallery Wall</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Discover stunning prints for your home or office. Each piece is crafted with precision and passion.
           </p>
         </div>
 
-        <div className="flex justify-center mb-8 gap-3 flex-wrap">
-          {['All', 'Landscape', 'Cityscape', 'Nature', 'Abstract', 'Portrait'].map((cat) => (
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="lg:text-xl lg:font-semibold lg:text-gray-800 hidden sm:block">Filter By Category</h2>
+          <div className="sm:hidden">
             <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === cat ? 'bg-black text-white' : 'bg-gray-200 text-gray-700'
-              }`}
+              onClick={() => setFilterOpen(!filterOpen)}
+              className="flex items-center gap-2 px-4 py-2 text-sm rounded-md bg-black text-white hover:bg-gray-800 transition"
             >
-              {cat}
+              <FiFilter /> 
             </button>
-          ))}
+          </div>
+
+          <div className="hidden sm:flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-4 py-2 text-sm rounded-full transition font-medium shadow-sm hover:bg-black hover:text-white ${
+                  filter === cat ? 'bg-black text-white' : 'bg-white text-gray-700 border'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
+
+        <AnimatePresence>
+          {filterOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="flex flex-col sm:hidden gap-2 mb-6"
+            >
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setFilter(cat);
+                    setFilterOpen(false);
+                  }}
+                  className={`px-4 py-2 text-sm rounded-md transition font-medium hover:bg-black hover:text-white ${
+                    filter === cat ? 'bg-black text-white' : 'bg-white text-gray-700 border'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredItems.map((item) => (
@@ -99,7 +140,6 @@ const ArtGallery = () => {
               <div className="relative h-64 w-full">
                 <img src={item.image} alt={item.title} className="w-full h-full object-cover" loading="lazy" draggable={false} />
               </div>
-
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
                   <div>
@@ -170,7 +210,6 @@ const ArtGallery = () => {
                   <FiX size={20} />
                 </button>
               </div>
-
               {cartItems.map((item) => (
                 <div key={item.id} className="flex items-center gap-4 mb-4">
                   <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded" />
@@ -188,7 +227,6 @@ const ArtGallery = () => {
                   </button>
                 </div>
               ))}
-
               <div className="border-t pt-4">
                 <div className="flex justify-between font-bold text-sm">
                   <span>Total:</span>
@@ -203,6 +241,7 @@ const ArtGallery = () => {
         )}
       </AnimatePresence>
 
+      {/* Image Preview Modal */}
       <AnimatePresence>
         {selectedItem && (
           <motion.div

@@ -7,18 +7,23 @@ import ScrollToTop from "./data/ScrollToTop.jsx";
 import "./index.css"; 
 
 import Home from "./pages/Home.jsx";
-import Book from "./pages/Book.jsx";
+// import Book from "./pages/Book.jsx";
 // import Gallery from "./pages/Gallery.jsx";
 // import Services from "./pages/Services.jsx";
-import Contact from "./pages/Contact.jsx";
-import ArtGallery from "./components/ArtGallery.jsx";
+// import Contact from "./pages/Contact.jsx";
+// import ArtGallery from "./components/ArtGallery.jsx";
+// import Shop from "./pages/Shop.jsx";
 
 
 // const Home = lazy(() => import('./pages/Home.jsx'));
 const Gallery = lazy(() => import('./pages/Gallery.jsx'));
-// const Book = lazy(() => import('./pages/Book.jsx'));
+const Book = lazy(() => import('./pages/Book.jsx'));
 const Services = lazy(() => import('./pages/Services.jsx'));
-// const Contact = lazy(() => import('./pages/Contact.jsx'));
+// const ArtGallery = lazy(() => import('./components/ArtGallery.jsx'));
+const Contact = lazy(() => import('./pages/Contact.jsx'));
+const Shop = lazy(() => import('./pages/Shop.jsx'));
+
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -36,9 +41,9 @@ createRoot(document.getElementById("root")).render(
             <Route path="gallery" element={<Gallery />} />
             <Route path="services" element={<Services />} />
             <Route path="contact" element={<Contact />} />
-            <Route path="artgallery" element={<ArtGallery />} />
-
-        
+            {/* <Route path="artgallery" element={<ArtGallery />} /> */}
+            <Route path="shop" element={<Shop />} />
+      
             <Route path="*" element={
                 <div className="text-center text-white py-20 text-xl font-semibold">
                   404 - Page Not Found

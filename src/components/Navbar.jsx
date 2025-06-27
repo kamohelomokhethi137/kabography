@@ -9,6 +9,7 @@ import {
   FiCalendar,
   FiUser,
   FiMail,
+  FiShoppingCart
 } from "react-icons/fi";
 
 const Navbar = () => {
@@ -69,8 +70,9 @@ const Navbar = () => {
     { name: "Home", icon: <FiHome />, path: "/home" },
     { name: "Gallery", icon: <FiImage />, path: "/gallery" },
     { name: "Services", icon: <FiCamera />, path: "/services" },
+    {name: "shop", icon: <FiShoppingCart />, path: "/shop"},
     { name: "Book", icon: <FiCalendar />, path: "/book" },
-    { name: "About", icon: <FiUser />, path: "#about" },
+    // { name: "About", icon: <FiUser />, path: "#about" },
     { name: "Contact", icon: <FiMail />, path: "/contact" },
   ];
 
@@ -154,7 +156,7 @@ const Navbar = () => {
                   href={item.path}
                   className="flex items-center gap-2 text-white hover:text-white/90 transition duration-200 ease-in-out hover:scale-105"
                   variants={linkVariants}
-                  onClick={() => setIsMenuOpen(false)} // close menu on click
+                  onClick={() => setIsMenuOpen(false)} 
                 >
                   {item.icon}
                   <span>{item.name}</span>
@@ -162,7 +164,7 @@ const Navbar = () => {
               ))}
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence>  
       </div>
     </motion.nav>
   );
