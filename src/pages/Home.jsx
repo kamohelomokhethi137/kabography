@@ -78,7 +78,7 @@ function Home() {
   if (!fontsLoaded) {
     return (
       <div className="flex items-center justify-center h-screen bg-black">
-        <div className="text-white text-xl">Loading...</div>
+        {/* <div className="text-white text-xl">Loading...</div>   */}
       </div>
     );
   }

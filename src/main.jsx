@@ -5,9 +5,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import App from "./App.jsx";
 import ScrollToTop from "./data/ScrollToTop.jsx";
 import "./index.css";
+import Home from "./pages/Home.jsx";
 
 // Lazy load pages
-const Home = lazy(() => import("./pages/Home.jsx"));
+// const Home = lazy(() => import("./pages/Home.jsx"));
 const Gallery = lazy(() => import("./pages/Gallery.jsx"));
 const Book = lazy(() => import("./pages/Book.jsx"));
 const Services = lazy(() => import("./pages/Services.jsx"));
