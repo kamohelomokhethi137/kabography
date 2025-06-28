@@ -39,28 +39,30 @@ function Home() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const containerRef = useRef(null);
 
-  const { scrollYProgress } = useScroll({ 
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false;
+
+  const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   useEffect(() => {
-    // Check if fonts are loaded
     if (typeof document !== 'undefined' && document.fonts) {
-      document.fonts.ready.then(() => {
-        setFontsLoaded(true);
-      });
+      document.fonts.ready.then(() => setFontsLoaded(true));
     } else {
-      setFontsLoaded(true); // Fallback if document.fonts not available
+      setFontsLoaded(true);
     }
 
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, []);
+    if (!prefersReducedMotion) {
+      const interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [prefersReducedMotion]);
 
   const handleScroll = useCallback(() => {
     setShowScrollToTop(window.scrollY > 400);
@@ -77,22 +79,20 @@ function Home() {
 
   if (!fontsLoaded) {
     return (
-      <div className="flex items-center justify-center h-screen bg-black">
-        {/* <div className="text-white text-xl">Loading...</div>   */}
-      </div>
+      <div className="flex items-center justify-center h-screen bg-black" aria-busy="true" aria-label="Loading content" />
     );
   }
 
   return (
-    <div 
-      className="relative min-h-screen overflow-hidden" 
+    <div
+      className="relative min-h-screen overflow-hidden"
       ref={containerRef}
       style={{ position: 'relative' }}
     >
       {/* Background Carousel */}
-      <motion.div 
+      <motion.div
         className="fixed inset-0 -z-10 h-[70vh] sm:h-full"
-        style={{ y }}
+        style={prefersReducedMotion ? {} : { y }}
       >
         <AnimatePresence initial={false}>
           <motion.div
@@ -109,7 +109,10 @@ function Home() {
               className="w-full h-full object-cover"
               style={{ filter: 'brightness(0.6) contrast(1.2)' }}
               loading="lazy"
+              decoding="async"
             />
+            {/* Top gradient overlay for text contrast */}
+            <div className="absolute top-0 w-full h-24 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
       </motion.div>
@@ -136,7 +139,7 @@ function Home() {
               direction="top"
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center"
             />
-            <motion.div 
+            <motion.div
               className="absolute inset-0 bg-white blur-xl opacity-20 pointer-events-none"
               initial={{ scale: 1.2, opacity: 0 }}
               animate={{ scale: 1, opacity: 0.2 }}
@@ -161,6 +164,7 @@ function Home() {
               </motion.span>
             ))}
           </motion.p>
+
           <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
             <Button
               href="#book"
@@ -180,7 +184,7 @@ function Home() {
         </motion.div>
 
         {/* Carousel Indicators */}
-        <motion.div 
+        <motion.div
           className="absolute bottom-4 sm:bottom-10 left-0 right-0 flex justify-center gap-2 sm:gap-3"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -190,17 +194,18 @@ function Home() {
             <button
               key={index}
               onClick={() => setCurrentImageIndex(index)}
-              className="group"
               aria-label={`View slide ${index + 1}`}
+              aria-current={index === currentImageIndex ? "true" : "false"}
+              className="group"
             >
-              <svg width="30" height="12" viewBox="0 0 30 12" className="sm:w-10">
-                <rect 
+              <svg width="30" height="12" viewBox="0 0 30 12" className="sm:w-10" role="img" aria-hidden="true" focusable="false">
+                <rect
                   x="0" y="0"
                   width="100%" height="2"
                   fill="currentColor"
                   className={`transition-all ${index === currentImageIndex ? 'text-white h-2' : 'text-gray-500 h-1'}`}
                 />
-                <rect 
+                <rect
                   x="0" y="10"
                   width="100%" height="2"
                   fill="currentColor"
