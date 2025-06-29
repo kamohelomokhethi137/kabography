@@ -1,12 +1,11 @@
-import React from 'react'
-import Typewriter from '../components/Typewriter'
+import BookingCard from '../components/BookingCard';
 
-function Book() {
+const Book = () => {
   return (
-  
-      <Typewriter />
-     
-  )
-}
+    <div className="min-h-screen bg-gray-50 py-20 px-4">
+      <BookingCard />
+    </div>
+  );
+};
 
-export default Book
+export default Book;

@@ -167,7 +167,7 @@ function Home() {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
             <Button
-              href="#book"
+              href="/book"
               icon={<FaArrowRight />}
               className="px-6 py-4 text-base sm:px-6 sm:py-3 sm:text-base"
             >

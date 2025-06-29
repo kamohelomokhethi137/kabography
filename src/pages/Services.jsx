@@ -10,6 +10,7 @@ const services = [
     icon: <FiCamera size={26} />,
     description:
       'Capture unforgettable moments with professional photography tailored for events, portraits, and lifestyle shoots.',
+      link: '/gallery',
   },
   {
     title: 'Photo Editing',
