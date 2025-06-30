@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { 
-  FiCalendar, 
-  FiSend, 
-  FiClock, 
+import {
+  FiCalendar,
+  FiClock,
   FiCamera,
   FiMail,
   FiPhone,
   FiCheck
 } from 'react-icons/fi';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaWhatsapp } from 'react-icons/fa';
 
 const sessionTypes = [
@@ -19,23 +18,64 @@ const sessionTypes = [
   { name: 'Studio', icon: <FiCamera className="mr-1" /> }
 ];
 
+const shake = {
+  hidden: { x: 0 },
+  visible: {
+    x: [0, -8, 8, -6, 6, -4, 4, 0],
+    transition: { duration: 0.4 },
+  },
+};
+
 const BookingCard = () => {
   const [sessionType, setSessionType] = useState('Portrait');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [shakeError, setShakeError] = useState(false);
+
+  const validate = () => {
+    const errorObj = {};
+    const now = new Date();
+    const selectedDateTime = new Date(`${date}T${time}`);
+
+    if (!date) errorObj.date = 'Please select a date';
+    if (!time) errorObj.time = 'Please select a time';
+    if (date && time && selectedDateTime <= now) {
+      errorObj.datetime = 'Selected time must be in the future';
+    }
+
+    setErrors(errorObj);
+    return Object.keys(errorObj).length === 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    if (validate()) {
+      setSubmitted(true);
+      setErrors({});
+      setTimeout(() => setSubmitted(false), 3000);
+    } else {
+      triggerShake();
+    }
+  };
+
+  const handleContactClick = (e) => {
+    if (!validate()) {
+      e.preventDefault();
+      triggerShake();
+    }
+  };
+
+  const triggerShake = () => {
+    setShakeError(true);
+    setTimeout(() => setShakeError(false), 500);
   };
 
   const whatsappMessage = `Hello Kabography! I'd like to book a ${sessionType} session on ${date} at ${time}.`;
   const whatsappLink = `https://wa.me/26653182775?text=${encodeURIComponent(whatsappMessage)}`;
-
   const mailtoLink = `mailto:kabography@gmail.com?subject=Booking%20a%20${sessionType}%20Session&body=${encodeURIComponent(
-    `Hi Kabography,%0D%0A%0D%0AI'd like to book a ${sessionType} session on ${date} at ${time}.%0D%0A%0D%0ALooking forward to your response!`
+    `Hi Kabography,\n\nI'd like to book a ${sessionType} session on ${date} at ${time}.\n\nLooking forward to your response!`
   )}`;
 
   return (
@@ -64,19 +104,17 @@ const BookingCard = () => {
           <p className="mt-4 text-gray-600">We'll contact you shortly to confirm your session.</p>
         </motion.div>
       ) : (
-        <form onSubmit={handleSubmit}>
-          {/* Session Type */}
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Session Types */}
           <div className="mb-6">
-            <label className="block mb-3 text-sm font-medium text-gray-700">
-              Select Session Type
-            </label>
+            <label className="block mb-3 text-sm font-medium text-gray-700">Select Session Type</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {sessionTypes.map((type) => (
                 <button
                   key={type.name}
                   type="button"
                   onClick={() => setSessionType(type.name)}
-                  className={`px-3 py-2 rounded-lg text-sm flex items-center justify-center transition-all ${
+                  className={`group px-3 py-2 rounded-lg text-sm flex items-center justify-center transition-all ${
                     sessionType === type.name
                       ? 'bg-black text-white shadow-md'
                       : 'bg-gray-50 border border-gray-200 text-gray-700 hover:bg-gray-100'
@@ -89,7 +127,7 @@ const BookingCard = () => {
             </div>
           </div>
 
-          {/* Date & Time Pickers */}
+          {/* Date & Time */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="flex-1">
               <label className="block mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -97,11 +135,11 @@ const BookingCard = () => {
               </label>
               <input
                 type="date"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-black"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                required
               />
+              {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
             </div>
             <div className="flex-1">
               <label className="block mb-2 text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -109,31 +147,38 @@ const BookingCard = () => {
               </label>
               <input
                 type="time"
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-black focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-black"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                required
               />
+              {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
+              {errors.datetime && <p className="text-red-500 text-sm mt-1">{errors.datetime}</p>}
             </div>
           </div>
 
           {/* Contact Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <motion.div
+            variants={shake}
+            animate={shakeError ? 'visible' : 'hidden'}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+          >
             <a
               href={whatsappLink}
+              onClick={handleContactClick}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-green-700 transition-all shadow hover:shadow-md"
+              className="bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all hover:bg-green-700 shadow hover:shadow-md"
             >
               <FaWhatsapp className="text-xl" /> WhatsApp
             </a>
             <a
               href={mailtoLink}
-              className="bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700 transition-all shadow hover:shadow-md"
+              onClick={handleContactClick}
+              className="bg-blue-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all hover:bg-blue-700 shadow hover:shadow-md"
             >
               <FiMail /> Email
             </a>
-          </div>
+          </motion.div>
 
           <div className="mt-4 text-center text-sm text-gray-500 flex items-center justify-center gap-2">
             <FiPhone className="text-gray-400" />
@@ -146,3 +191,4 @@ const BookingCard = () => {
 };
 
 export default BookingCard;
+    
