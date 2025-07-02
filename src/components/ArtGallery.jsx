@@ -1,6 +1,6 @@
 // ArtGallery.jsx
-import { FiShoppingCart, FiX, FiFilter } from 'react-icons/fi';
-import { useState, useRef } from 'react';
+import { FiShoppingCart, FiX, FiFilter, FiChevronDown, FiChevronUp } from 'react-icons/fi';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const sizeOptions = [
@@ -10,15 +10,36 @@ const sizeOptions = [
   { label: 'A1', multiplier: 2 }
 ];
 
+const imageTitles = [
+  "Tranquil Horizon",
+  "Shepherd's Trail",
+  "Misty Morning",
+  "Village Life",
+  "Golden Valleys",
+  "Cultural Colors",
+  "Urban Reflections",
+  "Highland Spirits",
+  "Dusk Over Mountains",
+  "Echoes of Silence",
+  "Timeless Journey",
+  "Waves of Nature",
+  "Sunset Solitude",
+  "Vivid Memories",
+  "Hillside Echo",
+  "Pathway of Light",
+  "Twilight Markets",
+  "Still Waters",
+  "Rustic Roads",
+  "Majestic Highlands"
+];
+
 const allGalleryItems = Array.from({ length: 20 }, (_, i) => ({
   id: i + 1,
-  title: `Artwork ${i + 1}`,
+  title: imageTitles[i],
   image: `/frames/${i + 1}.jpg`,
   price: 199 + (i % 5) * 20,
   category: ['Landscape', 'Portrait', 'Abstract', 'Nature', 'Cityscape'][i % 5]
 }));
-
-const ITEMS_PER_PAGE = 9;
 
 const ArtGallery = () => {
   const [filterOpen, setFilterOpen] = useState(false);
@@ -27,14 +48,23 @@ const ArtGallery = () => {
   const [showCart, setShowCart] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
   const galleryTopRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  // Handle resize to update isMobile state
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const ITEMS_PER_PAGE = isMobile ? 7 : 9;
+
   const categories = ['All', 'Landscape', 'Cityscape', 'Nature', 'Abstract', 'Portrait'];
 
   const filteredItems = allGalleryItems.filter(item =>
     filter === 'All' ? true : item.category === filter
   );
-
   const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
 
   const paginatedItems = filteredItems.slice(
@@ -43,7 +73,6 @@ const ArtGallery = () => {
   );
 
   const getSizeForItem = (id) => selectedSizes[id] || 'A4';
-
   const getPriceWithSize = (basePrice, sizeLabel) => {
     const sizeObj = sizeOptions.find(s => s.label === sizeLabel);
     return Math.round(basePrice * (sizeObj?.multiplier || 1));
@@ -92,111 +121,121 @@ const ArtGallery = () => {
     });
   };
 
+  const onSelectFilter = (cat) => {
+    setFilter(cat);
+    setCurrentPage(1);
+    setFilterOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 text-black">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight">Premium Art Prints</h1>
+      <div ref={galleryTopRef} className="text-center mb-10">
+        <h1 className="text-4xl font-extrabold tracking-tight">Framed Photography Collection</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-2">
-          Discover timeless photography framed to perfection. Modern elegance meets curated creativity.
+          Elevate your space with timeless photographic wall art curated from scenic and cultural moments.
         </p>
       </div>
 
-      {/* Filter Section */}
-      <div className="mb-6">
-        <div className="sm:hidden flex justify-end mb-2">
-          <button
-            onClick={() => setFilterOpen(!filterOpen)}
-            className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded hover:bg-gray-800"
-          >
-            <FiFilter /> Filter
-          </button>
-        </div>
+      {/* Filter: desktop buttons, mobile dropdown */}
+      <div className="mb-6 flex justify-between items-center">
+        {!isMobile && (
+          <div className="flex flex-wrap gap-2">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => onSelectFilter(cat)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition border ${
+                  filter === cat
+                    ? 'bg-black text-white'
+                    : 'text-black border-gray-300 hover:bg-black hover:text-white'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <AnimatePresence>
-          {filterOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="sm:hidden flex flex-col gap-2 mb-4"
-            >
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => {
-                    setFilter(cat);
-                    setCurrentPage(1);
-                    setFilterOpen(false);
-                  }}
-                  className={`px-4 py-2 rounded ${
-                    filter === cat ? 'bg-black text-white' : 'bg-white border text-black'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="hidden sm:flex gap-2 justify-center flex-wrap">
-          {categories.map(cat => (
+        {isMobile && (
+          <div className="relative">
             <button
-              key={cat}
-              onClick={() => {
-                setFilter(cat);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition shadow-sm ${
-                filter === cat ? 'bg-black text-white' : 'bg-white border text-black'
-              }`}
+              onClick={() => setFilterOpen(prev => !prev)}
+              className="flex items-center gap-2 px-4 py-2 border rounded-full text-black bg-white"
+              aria-haspopup="listbox"
+              aria-expanded={filterOpen}
             >
-              {cat}
+              <FiFilter size={20} />
+              <span>{filter}</span>
+              {filterOpen ? <FiChevronUp /> : <FiChevronDown />}
             </button>
-          ))}
-        </div>
+
+            <AnimatePresence>
+              {filterOpen && (
+                <motion.ul
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute z-50 mt-2 w-40 bg-white border rounded shadow-lg"
+                  role="listbox"
+                >
+                  {categories.map(cat => (
+                    <li
+                      key={cat}
+                      onClick={() => onSelectFilter(cat)}
+                      className={`cursor-pointer px-4 py-2 hover:bg-gray-100 ${
+                        filter === cat ? 'font-bold bg-gray-200' : ''
+                      }`}
+                      role="option"
+                      aria-selected={filter === cat}
+                    >
+                      {cat}
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
-      {/* Gallery Grid */}
-      <div ref={galleryTopRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Gallery grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {paginatedItems.map(item => {
           const size = getSizeForItem(item.id);
-          const finalPrice = getPriceWithSize(item.price, size);
+          const updatedPrice = getPriceWithSize(item.price, size);
 
           return (
             <motion.div
               key={item.id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition"
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-xl overflow-hidden shadow-lg"
             >
-              <img src={item.image} alt={item.title} className="w-full h-64 object-cover" />
-              <div className="p-5">
-                <h3 className="text-lg font-bold">{item.title}</h3>
-                <p className="text-sm text-gray-500">{item.category}</p>
-
-                <div className="mt-3">
-                  <label className="text-sm font-medium block mb-1">Size</label>
-                  <select
-                    className="w-full border rounded px-3 py-2 text-sm"
-                    value={size}
-                    onChange={(e) =>
-                      setSelectedSizes(prev => ({ ...prev, [item.id]: e.target.value }))
-                    }
-                  >
-                    {sizeOptions.map(opt => (
-                      <option key={opt.label} value={opt.label}>{opt.label}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <p className="mt-2 text-green-600 font-semibold">R {finalPrice}</p>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-64 object-cover"
+                loading="lazy"
+              />
+              <div className="p-4">
+                <h2 className="font-semibold text-lg text-black mb-1">{item.title}</h2>
+                <p className="text-sm text-gray-600 mb-3">{item.category}</p>
+                <select
+                  className="w-full border px-3 py-2 text-sm rounded-md mb-2"
+                  value={size}
+                  onChange={(e) => setSelectedSizes(prev => ({ ...prev, [item.id]: e.target.value }))}
+                >
+                  {sizeOptions.map(opt => (
+                    <option key={opt.label} value={opt.label}>{opt.label}</option>
+                  ))}
+                </select>
+                <p className="text-green-600 font-bold mb-2">R {updatedPrice}</p>
                 <button
                   onClick={() => addToCart(item, size)}
-                  className="mt-3 w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+                  className="w-full py-2 bg-black text-white rounded-md hover:bg-gray-900 transition"
                 >
-                  <FiShoppingCart className="inline mr-2" /> Add to Cart
+                  <FiShoppingCart className="inline mr-1" /> Add to Cart
                 </button>
               </div>
             </motion.div>
@@ -204,34 +243,34 @@ const ArtGallery = () => {
         })}
       </div>
 
-      {/* Pagination */}
-      <div className="mt-10 flex justify-center gap-4 items-center">
+      {/* Pagination below gallery */}
+      <div className="flex justify-center gap-4 mt-10">
         <button
           onClick={() => handlePageChange('prev')}
           disabled={currentPage === 1}
-          className="px-4 py-2 bg-black text-white rounded disabled:opacity-40"
+          className="px-4 py-2 text-sm rounded border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Previous
         </button>
-        <span className="text-sm font-medium">Page {currentPage} of {totalPages}</span>
         <button
           onClick={() => handlePageChange('next')}
           disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-black text-white rounded disabled:opacity-40"
+          className="px-4 py-2 text-sm rounded border bg-white hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
         </button>
       </div>
 
-      {/* Floating Cart Icon */}
+      {/* Cart Button */}
       {cartItems.length > 0 && (
         <div className="fixed bottom-6 right-6 z-50">
           <button
             onClick={() => setShowCart(!showCart)}
-            className="relative bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-800"
+            className="relative bg-black text-white rounded-full p-4 shadow-lg hover:bg-gray-800 transition"
+            aria-label="Toggle cart"
           >
             <FiShoppingCart size={24} />
-            <span className="absolute -top-1 -right-1 bg-red-600 rounded-full text-xs w-5 h-5 flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
               {totalItems}
             </span>
           </button>
@@ -245,53 +284,50 @@ const ArtGallery = () => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
-            className="fixed bottom-20 right-6 w-80 max-h-[70vh] overflow-y-auto bg-white rounded-lg shadow-xl z-50"
+            className="fixed bottom-20 right-6 w-80 max-h-[70vh] overflow-y-auto bg-white shadow-2xl rounded-lg z-50 text-black"
           >
             <div className="p-4">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold">Your Cart</h3>
-                <button onClick={() => setShowCart(false)} className="text-gray-600 hover:text-black">
-                  <FiX />
+                <h3 className="font-bold text-xl">Your Cart</h3>
+                <button onClick={() => setShowCart(false)} className="text-gray-500 hover:text-black" aria-label="Close cart">
+                  <FiX size={20} />
                 </button>
               </div>
-
               {cartItems.map(item => (
-                <div key={item.cartKey} className="flex gap-3 mb-4 items-center">
-                  <img src={item.image} alt={item.title} className="w-14 h-14 object-cover rounded" />
+                <div key={item.cartKey} className="flex items-center gap-4 mb-4">
+                  <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded" />
                   <div className="flex-1">
-                    <h4 className="font-medium text-sm">{item.title} ({item.size})</h4>
+                    <h4 className="text-sm font-medium">{item.title} ({item.size})</h4>
                     <p className="text-xs">R {item.price}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <button
                         onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
-                        className="px-2 bg-gray-200 rounded"
-                      >
-                        -
-                      </button>
-                      <span className="text-sm">{item.quantity}</span>
+                        className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                        aria-label={`Decrease quantity of ${item.title}`}
+                      >-</button>
+                      <span>{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
-                        className="px-2 bg-gray-200 rounded"
-                      >
-                        +
-                      </button>
+                        className="px-2 bg-gray-200 rounded hover:bg-gray-300"
+                        aria-label={`Increase quantity of ${item.title}`}
+                      >+</button>
                     </div>
                   </div>
                   <button
                     onClick={() => removeFromCart(item.cartKey)}
                     className="text-gray-400 hover:text-red-600"
+                    aria-label={`Remove ${item.title} from cart`}
                   >
                     <FiX />
                   </button>
                 </div>
               ))}
-
-              <div className="border-t pt-3">
-                <div className="flex justify-between font-semibold text-sm">
+              <div className="border-t pt-4">
+                <div className="flex justify-between font-bold">
                   <span>Total:</span>
                   <span className="text-green-600">R {totalPrice}</span>
                 </div>
-                <button className="mt-3 w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition">
+                <button className="mt-4 w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition">
                   Checkout
                 </button>
               </div>
