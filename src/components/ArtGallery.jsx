@@ -11,26 +11,27 @@ const sizeOptions = [
 ];
 
 const imageTitles = [
-  "Tranquil Horizon",
-  "Shepherd's Trail",
-  "Misty Morning",
-  "Village Life",
-  "Golden Valleys",
-  "Cultural Colors",
-  "Urban Reflections",
-  "Highland Spirits",
-  "Dusk Over Mountains",
-  "Echoes of Silence",
-  "Timeless Journey",
+  "Horse with rider",
+  "Sunset bushes",
+  "Horse with Carry",
+  "Butterfly",
+  "Catcus in Middle if Summer",
+  "Towering Clouds with Birds",
+  "Fire in dark",
+  "Lesotho Working Donkey",
+  "The Sunset",
+  "Mohale Dam waters and village",
   "Waves of Nature",
-  "Sunset Solitude",
-  "Vivid Memories",
-  "Hillside Echo",
-  "Pathway of Light",
-  "Twilight Markets",
+  "Maseru Town",
+  "Rusty tractor",
+  "Basotho Shepherds",
+  "Thaba Bosiu, Qiloane Mountaint",
+  "Lesotho Houses, Mokhoro 1",
   "Still Waters",
-  "Rustic Roads",
-  "Majestic Highlands"
+  "Lesotho Houses, Haisi  ",
+  "Beautiful Cat",
+  "Beautiful Cat"
+
 ];
 
 const allGalleryItems = Array.from({ length: 20 }, (_, i) => ({
