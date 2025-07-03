@@ -20,32 +20,72 @@ const sessionTypes = [
   { name: 'Studio', icon: <FiCamera className="mr-1" /> }
 ];
 
-// Wedding Packages
+// Wedding Packages (Updated with combos)
 const weddingPackages = [
+  // Photography Packages
   {
-    name: 'Silver',
-    price: 'R2500.00',
-    features: ['150 edited pictures', 'A4 Canvas print']
+    name: 'Kilver',
+    price: 'R2,500.00',
+    features: ['150 edited pictures', 'A4 Canvas print'],
+    type: 'photography'
   },
   {
     name: 'Gold',
-    price: 'R5000.00',
-    features: ['300+ edited pictures', 'A3 Canvas print', 'Trailer Video']
-  },
-  {
-    name: 'Gold (Full Day)',
-    price: 'R5000.00',
-    features: ['Full Day Coverage', 'Free Invitation']
+    price: 'R5,000.00',
+    features: ['300+ edited pictures', 'A3 Canvas print', 'Trailer Video'],
+    type: 'photography'
   },
   {
     name: 'Platinum',
-    price: 'R9500.00',
-    features: ['450+ edited pictures', 'A2 Canvas print', 'Wedding Summary Video']
+    price: 'R9,500.00',
+    features: ['450+ edited pictures', 'A2 Canvas print', 'Wedding Summary Video'],
+    type: 'photography'
+  },
+  
+  // New Combo Packages
+  {
+    name: 'Silver Combo',
+    price: 'R4,500.00',
+    features: [
+      '30–35 minutes video',
+      '70 edited pictures',
+      'A4 Canvas print',
+      'Free invitation'
+    ],
+    type: 'combo'
   },
   {
-    name: 'Platinum (Full Day)',
-    price: 'R14000.00',
-    features: ['600 edited pictures', 'A0 Canvas print', 'Summary and Trailer Video']
+    name: 'Gold Combo',
+    price: 'R6,700.00',
+    features: [
+      '50–55 minutes video',
+      '90 edited pictures',
+      'A3 Canvas print',
+      'Free invitation'
+    ],
+    type: 'combo'
+  },
+  {
+    name: 'Platinum Combo',
+    price: 'R9,500.00',
+    features: [
+      '1hr–1hr 5min video',
+      '150 edited pictures',
+      'A2 Canvas print',
+      'Free invitation'
+    ],
+    type: 'combo'
+  },
+  {
+    name: 'Titanium Combo',
+    price: 'R14,000.00',
+    features: [
+      '2hrs–2hrs 5min video',
+      '200 edited pictures',
+      'A0 Canvas print',
+      'Free invitation'
+    ],
+    type: 'combo'
   }
 ];
 
@@ -129,6 +169,7 @@ const BookingCard = () => {
     videos: null,
     invitations: []
   });
+  const [weddingTab, setWeddingTab] = useState('photography');
 
   const validate = () => {
     const errorObj = {};
@@ -154,6 +195,7 @@ const BookingCard = () => {
       videos: null,
       invitations: []
     });
+    setWeddingTab('photography');
     
     if (['Wedding', 'Studio', 'Event'].includes(name)) {
       setShowPackagesModal(true);
@@ -246,31 +288,56 @@ const BookingCard = () => {
       case 'Wedding':
         return (
           <div className="space-y-4">
-            <h4 className="font-medium text-lg mb-3">Wedding Packages</h4>
-            {weddingPackages.map((pkg, index) => (
-              <div
-                key={index}
-                onClick={() => handlePackageSelect(pkg)}
-                className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  selectedPackage?.name === pkg.name
-                    ? 'border-black bg-gray-50'
-                    : 'border-gray-200 hover:border-gray-400'
-                }`}
+            <div className="flex space-x-2 mb-4">
+              <button
+                onClick={() => setWeddingTab('photography')}
+                className={`px-4 py-2 rounded-lg ${weddingTab === 'photography' ? 'bg-black text-white' : 'bg-gray-100'}`}
               >
-                <div className="flex justify-between items-start">
-                  <h4 className="font-medium">{pkg.name}</h4>
-                  <span className="font-bold">{pkg.price}</span>
+                Photography
+              </button>
+              <button
+                onClick={() => setWeddingTab('combo')}
+                className={`px-4 py-2 rounded-lg ${weddingTab === 'combo' ? 'bg-black text-white' : 'bg-gray-100'}`}
+              >
+                Video+Photo Combos
+              </button>
+            </div>
+
+            <h4 className="font-medium text-lg mb-3">
+              {weddingTab === 'photography' ? 'Photography Packages' : 'Video+Photo Combos'}
+            </h4>
+            
+            {weddingPackages
+              .filter(pkg => pkg.type === weddingTab)
+              .map((pkg, index) => (
+                <div
+                  key={index}
+                  onClick={() => handlePackageSelect(pkg)}
+                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                    selectedPackage?.name === pkg.name
+                      ? 'border-black bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-medium">{pkg.name}</h4>
+                    <span className="font-bold">{pkg.price}</span>
+                  </div>
+                  <ul className="mt-2 text-sm text-gray-600 space-y-1">
+                    {pkg.features.map((feature, i) => (
+                      <li key={i} className="flex items-start">
+                        <span className="mr-2">•</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {pkg.type === 'combo' && (
+                    <div className="mt-2 text-xs text-blue-600">
+                      <FiVideo className="inline mr-1" /> Video + <FiCamera className="inline mr-1" /> Photo Combo
+                    </div>
+                  )}
                 </div>
-                <ul className="mt-2 text-sm text-gray-600 space-y-1">
-                  {pkg.features.map((feature, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="mr-2">•</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              ))}
           </div>
         );
       case 'Studio':
