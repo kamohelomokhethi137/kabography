@@ -87,8 +87,8 @@ const ArtisticGallery = () => {
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] z-0" />
 
       {/* Header */}
-      <header className="max-w-6xl mx-auto mb-8 md:mb-12">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Artistic Gallery</h1>
+      <header className="max-w-6xl mx-auto mt-8 mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Gallery Collection</h1>
         <p className="text-white/70 max-w-2xl">Explore our curated collections of stunning artworks</p>
       </header>
 
@@ -285,11 +285,7 @@ const ArtisticGallery = () => {
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-white text-sm font-medium bg-black/70 px-3 py-1 rounded-full">
-                        View Details
-                      </span>
-                    </div>
+                   
                   </motion.div>
                 ))}
               </div>
