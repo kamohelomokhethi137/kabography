@@ -23,7 +23,7 @@ const sessionTypes = [
 // Wedding Packages
 const weddingPackages = [
   {
-    name: 'Kilver',
+    name: 'Silver',
     price: 'R2500.00',
     features: ['150 edited pictures', 'A4 Canvas print']
   },
