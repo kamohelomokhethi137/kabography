@@ -1,73 +1,58 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import images from '../data/galleryData';
-import { FaChevronDown, FaChevronUp, FaFilter } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp, FaFilter, FaTimes } from 'react-icons/fa';
 
 const ArtisticGallery = () => {
   const [loaded, setLoaded] = useState(() => Array(images.length).fill(false));
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [modalImage, setModalImage] = useState(null);
+  const [modalCollection, setModalCollection] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [isFiltering, setIsFiltering] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const itemRefs = useRef([]);
   const dropdownRef = useRef(null);
+  const modalRef = useRef(null);
 
+  // Check for mobile viewport
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  // Get unique categories
   const categories = useMemo(() => {
     const cats = Array.from(new Set(images.map(img => img.category))).sort();
     return ['All', ...cats];
   }, []);
 
-  const handleImageLoad = useCallback((index) => {
-    setLoaded((prev) => {
-      if (prev[index]) return prev;
-      const next = [...prev];
-      next[index] = true;
-      return next;
-    });
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = 1;
-          entry.target.style.transform = 'scale(1)';
-          entry.target.style.transition = 'opacity 0.7s ease-in-out, transform 0.4s ease';
-          observer.unobserve(entry.target);
-        }
+  // Group images by collection
+  const collections = useMemo(() => {
+    if (selectedCategory === 'All') {
+      const grouped = {};
+      images.forEach(img => {
+        if (!grouped[img.category]) grouped[img.category] = [];
+        grouped[img.category].push(img);
       });
-    }, { threshold: 0.2 });
-
-    itemRefs.current.forEach((el) => {
-      if (el) {
-        el.style.opacity = 0;
-        el.style.transform = 'scale(0.95)';
-        observer.observe(el);
-      }
-    });
-
-    return () => observer.disconnect();
-  }, [visibleCount, isFiltering]);
-
-  const filteredImages = useMemo(() => {
-    return images.filter(img =>
-      selectedCategory === 'All' ? true : img.category === selectedCategory
-    );
+      return grouped;
+    } else {
+      return {
+        [selectedCategory]: images.filter(img => img.category === selectedCategory),
+      };
+    }
   }, [selectedCategory]);
 
-  const handleViewMore = () => {
-    setVisibleCount((prev) => Math.min(prev + 6, filteredImages.length));
-  };
-
-  const handleCategoryChange = (cat) => {
-    setIsFiltering(true);
+  // Handle category selection
+  const handleCategoryChange = useCallback((cat) => {
     setSelectedCategory(cat);
-    setVisibleCount(Math.min(6, filteredImages.length));
     setDropdownOpen(false);
-    setTimeout(() => setIsFiltering(false), 300);
-  };
+  }, []);
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -78,156 +63,249 @@ const ArtisticGallery = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Handle escape key for modal
   useEffect(() => {
-    const closeOnScroll = () => setDropdownOpen(false);
-    window.addEventListener('scroll', closeOnScroll);
-    return () => window.removeEventListener('scroll', closeOnScroll);
-  }, []);
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && modalCollection) {
+        setModalCollection(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [modalCollection]);
+
+  // Focus trap for modal
+  useEffect(() => {
+    if (modalCollection && modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, [modalCollection]);
 
   return (
-    <section className="relative bg-black text-white py-24 px-4 md:px-8 min-h-screen">
+    <section className="relative bg-black text-white py-12 md:py-24 px-4 md:px-8 min-h-screen">
+      {/* Background effect */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] z-0" />
 
-      {/* Desktop Filter Button (top-right, not fixed) */}
-      <div className="hidden md:flex justify-end max-w-6xl mx-auto mb-10 px-2">
-        <div ref={dropdownRef} className="relative">
+      {/* Header */}
+      <header className="max-w-6xl mx-auto mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Artistic Gallery</h1>
+        <p className="text-white/70 max-w-2xl">Explore our curated collections of stunning artworks</p>
+      </header>
+
+      {/* Filter Dropdown - Mobile */}
+      {isMobile && (
+        <div className="mb-6">
           <button
-            onClick={() => setDropdownOpen((open) => !open)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all"
+            onClick={() => setDropdownOpen(open => !open)}
+            className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-base font-medium text-white bg-white/10 border border-white/20"
+            aria-expanded={dropdownOpen}
+            aria-haspopup="listbox"
+            aria-label="Filter by category"
           >
-            {selectedCategory}
-            {dropdownOpen ? <FaChevronUp /> : <FaChevronDown />}
+            <span>{selectedCategory}</span>
+            <FaFilter className="ml-2" />
           </button>
 
-          <div
-            className={`absolute left-0 mt-2 w-48 rounded-xl bg-[#1a1a1a] border border-white/20 shadow-xl overflow-auto z-[999] transition-all duration-300 ${
-              dropdownOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 -translate-y-2 invisible'
-            }`}
-          >
-            <ul role="menu">
-              {categories.map((cat) => (
-                <li key={cat}>
-                  <button
-                    onClick={() => handleCategoryChange(cat)}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      selectedCategory === cat
-                        ? 'bg-white text-black font-semibold'
-                        : 'text-white hover:bg-white/20'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                </li>
-              ))}
-            </ul>
+          <AnimatePresence>
+            {dropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                <ul 
+                  role="listbox"
+                  className="mt-2 bg-[#1a1a1a] rounded-lg border border-white/20"
+                >
+                  {categories.map((cat) => (
+                    <motion.li 
+                      key={cat}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <button
+                        onClick={() => handleCategoryChange(cat)}
+                        className={`block w-full text-left px-4 py-3 text-base ${
+                          selectedCategory === cat 
+                            ? 'bg-white text-black font-semibold' 
+                            : 'text-white hover:bg-white/10'
+                        }`}
+                        role="option"
+                        aria-selected={selectedCategory === cat}
+                      >
+                        {cat}
+                      </button>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* Filter Dropdown - Desktop */}
+      {!isMobile && (
+        <div className="flex justify-end max-w-6xl mx-auto mb-10 px-2">
+          <div ref={dropdownRef} className="relative">
+            <button
+              onClick={() => setDropdownOpen(open => !open)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-md transition-all"
+              aria-expanded={dropdownOpen}
+              aria-haspopup="listbox"
+              aria-label="Filter by category"
+            >
+              {selectedCategory}
+              {dropdownOpen ? <FaChevronUp size={14} /> : <FaChevronDown size={14} />}
+            </button>
+
+            <AnimatePresence>
+              {dropdownOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute left-0 mt-2 w-48 rounded-xl bg-[#1a1a1a] border border-white/20 shadow-xl z-[999]"
+                >
+                  <ul role="listbox">
+                    {categories.map((cat) => (
+                      <motion.li 
+                        key={cat}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <button
+                          onClick={() => handleCategoryChange(cat)}
+                          className={`block w-full text-left px-4 py-2 text-sm ${
+                            selectedCategory === cat 
+                              ? 'bg-white text-black font-semibold' 
+                              : 'text-white hover:bg-white/10'
+                          }`}
+                          role="option"
+                          aria-selected={selectedCategory === cat}
+                        >
+                          {cat}
+                        </button>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Gallery */}
-      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        {filteredImages.slice(0, visibleCount).map((img, index) => {
-          const originalIndex = images.findIndex(i => i.src === img.src);
-
-          return (
+      {/* Collection Display */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto z-10 relative">
+        {Object.entries(collections).map(([cat, imgs]) => (
+          <motion.div
+            key={cat}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            whileHover={{ y: -5 }}
+            className="bg-[#111] rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition-all"
+          >
             <div
-              key={`${img.src}-${index}`}
-              ref={(el) => (itemRefs.current[index] = el)}
-              onClick={() => setModalImage(img)}
-              className="aspect-[4/3] bg-[#1a1a1a] rounded-xl overflow-hidden relative cursor-pointer hover:scale-105 transition-transform border border-white/10"
+              className="relative aspect-[4/3] overflow-hidden cursor-pointer group"
+              onClick={() => setModalCollection({ cat, imgs })}
+              role="button"
+              tabIndex={0}
+              aria-label={`View ${cat} collection`}
             >
-              {!loaded[originalIndex] && (
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-10">
-                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
-                </div>
-              )}
-
               <img
-                src={img.src}
-                alt="Gallery"
-                onLoad={() => handleImageLoad(originalIndex)}
-                className={`w-full h-full object-cover transition-opacity duration-700 ${
-                  loaded[originalIndex] ? 'opacity-100' : 'opacity-0'
-                }`}
+                src={imgs[0].src}
+                alt={cat}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
-                decoding="async"
-                draggable={false}
               />
-              <div className="absolute bottom-0 left-0 w-full p-3 bg-gradient-to-t from-black/60 to-transparent">
-                <p className="text-sm font-semibold text-white">{img.category}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex flex-col justify-end p-4">
+                <h2 className="text-xl font-bold mb-1">{cat} Collection</h2>
+                <p className="text-sm text-white/80">{imgs.length} artworks</p>
               </div>
             </div>
-          );
-        })}
+          </motion.div>
+        ))}
       </div>
 
-      {/* View More */}
-      {visibleCount < filteredImages.length && (
-        <div className="text-center mt-10">
-          <button
-            onClick={handleViewMore}
-            className="px-6 py-2 rounded-full border border-white text-white font-medium hover:bg-white hover:text-black transition"
+      {/* Modal Collection View */}
+      <AnimatePresence>
+        {modalCollection && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 overflow-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
           >
-            View More
-          </button>
-        </div>
-      )}
-
-      {/* Modal */}
-      {modalImage && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-          <div className="bg-black border border-white p-6 rounded-xl max-w-3xl w-full text-center">
-            <img
-              src={modalImage.src}
-              alt="Preview"
-              className="max-h-[60vh] w-full object-contain rounded-lg mb-4"
+            <div 
+              className="absolute inset-0" 
+              onClick={() => setModalCollection(null)}
+              aria-label="Close modal"
             />
-            <p className="text-lg font-semibold mb-4">{modalImage.category} Photo</p>
-            <button
-              onClick={() => setModalImage(null)}
-              className="px-5 py-2 bg-white text-black rounded-full font-semibold"
+            
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="relative bg-black border border-white/20 rounded-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto p-6 z-10"
+              ref={modalRef}
+              tabIndex={-1}
             >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+              <button
+                onClick={() => setModalCollection(null)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                aria-label="Close modal"
+              >
+                <FaTimes />
+              </button>
 
-      {/* Mobile Filter Button (fixed bottom-right) */}
-      <div className="md:hidden fixed bottom-5 right-4 z-[999]">
-        <div ref={dropdownRef} className="relative">
-          <button
-            onClick={() => setDropdownOpen((open) => !open)}
-            className="w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 text-white rounded-full border border-white/20 backdrop-blur-md"
-          >
-            <FaFilter />
-          </button>
-
-          {/* Dropdown opens upward on mobile */}
-          <div
-            className={`absolute bottom-14 right-0 w-40 rounded-xl bg-[#1a1a1a] border border-white/20 shadow-xl transition-all duration-300 z-[999] ${
-              dropdownOpen ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-2 invisible'
-            }`}
-          >
-            <ul role="menu">
-              {categories.map((cat) => (
-                <li key={cat}>
-                  <button
-                    onClick={() => handleCategoryChange(cat)}
-                    className={`block w-full text-left px-4 py-2 text-sm ${
-                      selectedCategory === cat
-                        ? 'bg-white text-black font-semibold'
-                        : 'text-white hover:bg-white/20'
-                    }`}
+              <h3 id="modal-title" className="text-2xl md:text-3xl font-bold mb-6 pr-8">
+                {modalCollection.cat} Collection
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {modalCollection.imgs.map((img, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.05, duration: 0.3 }}
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-white/10 hover:border-white/30 transition-all"
                   >
-                    {cat}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+                    <img
+                      src={img.src}
+                      alt={`Artwork ${i + 1} from ${modalCollection.cat} collection`}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-white text-sm font-medium bg-black/70 px-3 py-1 rounded-full">
+                        View Details
+                      </span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setModalCollection(null)}
+                  className="px-6 py-2 bg-white text-black rounded-full font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Close Collection
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
