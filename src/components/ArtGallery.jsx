@@ -30,8 +30,30 @@ const imageTitles = [
   "Still Waters",
   "Lesotho Houses, Haisi  ",
   "Beautiful Cat",
-  "Beautiful Cat"
+  "Molisana, Man is highlands"
+];
 
+const imageCategories = [
+  'Landscape',
+  'Nature',
+  'Landscape',
+  'Nature',
+  'Nature',
+  'Nature',
+  'Nature',
+  'Landscape',
+  'Landscape',
+  'Landscape',
+  'Protrait',
+  'Cityscape',
+  'Abstract',
+  'Landscape',
+  'Nature',
+  'Landscape',
+  'Landscape',
+  'Landscape',
+  'Portrait',
+  'Portrait'
 ];
 
 const allGalleryItems = Array.from({ length: 20 }, (_, i) => ({
@@ -39,7 +61,7 @@ const allGalleryItems = Array.from({ length: 20 }, (_, i) => ({
   title: imageTitles[i],
   image: `/frames/${i + 1}.jpg`,
   price: 199 + (i % 5) * 20,
-  category: ['Landscape', 'Portrait', 'Abstract', 'Nature', 'Cityscape'][i % 5]
+  category: imageCategories[i]
 }));
 
 const ArtGallery = () => {
@@ -52,7 +74,6 @@ const ArtGallery = () => {
   const galleryTopRef = useRef(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
-  // Handle resize to update isMobile state
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener('resize', onResize);
@@ -61,7 +82,7 @@ const ArtGallery = () => {
 
   const ITEMS_PER_PAGE = isMobile ? 7 : 9;
 
-  const categories = ['All', 'Landscape', 'Cityscape', 'Nature', 'Abstract', 'Portrait'];
+  const categories = ['All', 'Landscape', 'Cityscape', 'Nature','Portrait'];
 
   const filteredItems = allGalleryItems.filter(item =>
     filter === 'All' ? true : item.category === filter
@@ -137,7 +158,7 @@ const ArtGallery = () => {
         </p>
       </div>
 
-      {/* Filter: desktop buttons, mobile dropdown */}
+      {/* Filter Section */}
       <div className="mb-6 flex justify-between items-center">
         {!isMobile && (
           <div className="flex flex-wrap gap-2">
@@ -199,7 +220,7 @@ const ArtGallery = () => {
         )}
       </div>
 
-      {/* Gallery grid */}
+      {/* Gallery Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {paginatedItems.map(item => {
           const size = getSizeForItem(item.id);
@@ -244,7 +265,7 @@ const ArtGallery = () => {
         })}
       </div>
 
-      {/* Pagination below gallery */}
+      {/* Pagination Controls */}
       <div className="flex justify-center gap-4 mt-10">
         <button
           onClick={() => handlePageChange('prev')}
@@ -262,7 +283,7 @@ const ArtGallery = () => {
         </button>
       </div>
 
-      {/* Cart Button */}
+      {/* Floating Cart Button */}
       {cartItems.length > 0 && (
         <div className="fixed bottom-6 right-6 z-50">
           <button

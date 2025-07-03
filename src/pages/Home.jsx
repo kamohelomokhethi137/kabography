@@ -5,11 +5,16 @@ import PinterestGrid from '../components/ArtisticGallery';
 import AboutMe from './AboutMe';
 import BlurText from '../animation/BlurText';
 import Button from '../animation/Button';
-import image1 from '../assets/intro/1.jpg';
-import image2 from '../assets/intro/2.jpg';
-import image3 from '../assets/intro/3.webp';
+// import image1 from '../assets/intro/1.jpg';
+// import image2 from '../assets/intro/2.jpg';
+// import image3 from '../assets/intro/3.webp';
 
-const heroImages = [image1, image2, image3];
+
+const Image1 = '/intro/3.webp'
+const Image2 = '/intro/2.jpg'
+const Image3 = '/intro/1.jpg'
+
+const heroImages = [Image1, Image2, Image3];
 
 const HolographicButton = ({ children, icon, ...props }) => (
   <motion.button
