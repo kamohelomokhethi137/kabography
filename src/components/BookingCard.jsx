@@ -24,7 +24,7 @@ const sessionTypes = [
 const weddingPackages = [
   // Photography Packages
   {
-    name: 'Kilver',
+    name: 'Silver',
     price: 'R2,500.00',
     features: ['150 edited pictures', 'A4 Canvas print'],
     type: 'photography'
